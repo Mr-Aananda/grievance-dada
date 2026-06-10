@@ -1,0 +1,90 @@
+// helpers ========================================>
+@use './helpers/variables' as *;
+@use './helpers/mixin' as *;
+
+// components ========================================>
+@use './components/utilities' as *;
+@use './components/primary_navigation' as *;
+@use './components/primary_aside' as *;
+@use './components/button' as *;
+@use './components/table' as *;
+@use './components/form' as *;
+@use './components/offcanvas' as *;
+@use './components/pos' as *;
+@use './components/invoice' as *;
+@use './components/grievance' as *;
+
+// Pages ========================================>
+@use './pages/authentication' as *;
+@use './pages/dashboard' as *;
+
+
+/* Add to app.css or your main CSS file */
+:root {
+    --modal-z-index: 9999;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: var(--modal-z-index);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure modal is above everything */
+.modal-overlay {
+    z-index: 9999 !important;
+}
+
+.modal-dialog {
+    z-index: 10000 !important;
+    animation: slideUp 0.3s ease;
+}
+
+/* Smooth transitions */
+.modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Confirmation modal specific */
+.confirmation-icon {
+    font-size: 4rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}

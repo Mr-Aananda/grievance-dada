@@ -1,0 +1,97 @@
+{
+  "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff": {
+    "file": "assets/bootstrap-icons-BeopsB42.woff",
+    "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff"
+  },
+  "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2": {
+    "file": "assets/bootstrap-icons-mSm7cUeB.woff2",
+    "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2"
+  },
+  "resources/assets/icons/danger.svg": {
+    "file": "assets/danger-BTM7GBRj.svg",
+    "src": "resources/assets/icons/danger.svg"
+  },
+  "resources/assets/icons/favicon.ico": {
+    "file": "assets/favicon-Cjbfe4Wy.ico",
+    "src": "resources/assets/icons/favicon.ico"
+  },
+  "resources/assets/icons/success.svg": {
+    "file": "assets/success-Dbwl_e0L.svg",
+    "src": "resources/assets/icons/success.svg"
+  },
+  "resources/assets/icons/warning.svg": {
+    "file": "assets/warning-CAgsL9E4.svg",
+    "src": "resources/assets/icons/warning.svg"
+  },
+  "resources/assets/images/background.jpeg": {
+    "file": "assets/background-M6fdviVh.jpeg",
+    "src": "resources/assets/images/background.jpeg"
+  },
+  "resources/assets/images/barcode.png": {
+    "file": "assets/barcode-CSor0Ls6.png",
+    "src": "resources/assets/images/barcode.png"
+  },
+  "resources/assets/images/dada_cap.png": {
+    "file": "assets/dada_cap-hbHClCVj.png",
+    "src": "resources/assets/images/dada_cap.png"
+  },
+  "resources/assets/images/logo/dada.jpg": {
+    "file": "assets/dada-C1ytNso9.jpg",
+    "src": "resources/assets/images/logo/dada.jpg"
+  },
+  "resources/assets/images/logo/dada_bg.png": {
+    "file": "assets/dada_bg-C4KFlofT.png",
+    "src": "resources/assets/images/logo/dada_bg.png"
+  },
+  "resources/assets/images/mail_bg.png": {
+    "file": "assets/mail_bg-C9tpt1HY.png",
+    "src": "resources/assets/images/mail_bg.png"
+  },
+  "resources/assets/images/south_korea.jpg": {
+    "file": "assets/south_korea-BSlmISOa.jpg",
+    "src": "resources/assets/images/south_korea.jpg"
+  },
+  "resources/assets/images/users/user.jpg": {
+    "file": "assets/user-Dz5hSWgK.jpg",
+    "src": "resources/assets/images/users/user.jpg"
+  },
+  "resources/assets/images/users/user.png": {
+    "file": "assets/user-wkJllL9E.png",
+    "src": "resources/assets/images/users/user.png"
+  },
+  "resources/assets/images/users/user2.png": {
+    "file": "assets/user2-C3E7eQzp.png",
+    "src": "resources/assets/images/users/user2.png"
+  },
+  "resources/js/app-legacy.js": {
+    "file": "assets/app-legacy-DHQgVWGR.js",
+    "name": "app",
+    "src": "resources/js/app-legacy.js",
+    "isEntry": true,
+    "assets": [
+      "assets/bootstrap-icons-mSm7cUeB.woff2",
+      "assets/bootstrap-icons-BeopsB42.woff",
+      "assets/mail_bg-C9tpt1HY.png"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BTEC-QGt.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-RO5oR10R.css"
+    ],
+    "assets": [
+      "assets/bootstrap-icons-mSm7cUeB.woff2",
+      "assets/bootstrap-icons-BeopsB42.woff",
+      "assets/mail_bg-C9tpt1HY.png"
+    ]
+  },
+  "vite/legacy-polyfills-legacy": {
+    "file": "assets/polyfills-legacy-BtxlTKpd.js",
+    "name": "polyfills",
+    "src": "vite/legacy-polyfills-legacy",
+    "isEntry": true
+  }
+}

@@ -1,0 +1,57 @@
+
+@use "../helpers" as *;
+
+.pos-invoice {
+    .sale-receipt {
+        font-size: 12px;
+        font-weight: 300;
+        font-family: "Oswald", sans-serif;
+        .dashed {
+            border-top: 1px dashed black;
+            display: block;
+            &.double {
+                height: 5px;
+                border-bottom: 1px dashed black;
+            }
+        }
+        table {
+            width: 100%;
+
+            thead {
+                border-bottom: 1px dashed black;
+            }
+            td {
+                color: black !important;
+            }
+            tfoot {
+                border-top: 1px dashed black;
+            }
+
+        }
+        .status {
+            font-size: 32px;
+            padding: 0;
+            font-family: "Handjet", sans-serif;
+            font-weight: 500;
+            padding-bottom: 0;
+            line-height: 30px;
+        }
+    }
+    @media print {
+        tbody {
+            td {
+                line-height: 18px;
+            }
+        }
+        .col-lg-9 {
+            padding: 0 !important;
+        }
+        .widget-body {
+            padding: 0;
+        }
+        .item-name{
+            max-width: 40% !important;
+            text-wrap: wrap !important;
+        }
+    }
+}

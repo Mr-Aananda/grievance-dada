@@ -1,0 +1,15 @@
+// Bootstrap
+@use 'bootstrap/scss/bootstrap' as *;
+@use '../assets/sass/master' as *;
+
+.select2-container .select2-selection {
+    height: 37px !important;
+    padding-top: 3px;
+}
+.select2-container .select2-selection__arrow{
+    margin-top: 3px;
+}
+[type=search] {
+    outline-offset: 2px !important;
+}
+

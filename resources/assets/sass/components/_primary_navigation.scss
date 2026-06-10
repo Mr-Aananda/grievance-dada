@@ -1,0 +1,625 @@
+@use "../helpers" as *;
+
+// Updated Color variables - White background with orange accent
+$primary-color: #e27c22;
+$primary-light: #f9b079;
+$primary-dark: #c96a1a;
+$topbar-bg: #ffffff;
+$topbar-text: #2d3748;
+$topbar-text-muted: #6b7280;
+$topbar-hover: #f8f9fa;
+$topbar-border: #e5e7eb;
+$topbar-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+// Start logobar =======================>
+.top-logobar {
+    @include flexBox($align-items: center);
+    background: $topbar-bg;
+    padding: 10px 20px;
+    border-bottom: 1px solid $topbar-border;
+    box-shadow: $topbar-shadow;
+
+    // For aside bar
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    z-index: 1001;
+    transition: all 0.3s ease;
+
+    // For nav bar
+    &.nav-logo-container {
+        position: relative;
+        width: auto;
+        height: auto;
+        background: transparent;
+        border-bottom: none;
+        box-shadow: none;
+        padding: 0;
+        margin-right: auto; // Changed from fixed margin to auto
+        margin-left: 25px; // Added left margin for better positioning
+
+        @media (max-width: 1400px) {
+            display: none;
+        }
+    }
+
+    button.sidebar-toggle {
+        width: 45px;
+        height: 45px;
+        border: none;
+        border-radius: 12px;
+        font-size: 20px;
+        color: $primary-color;
+        background-color: rgba($primary-color, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba($primary-color, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+
+        &:hover {
+            background-color: rgba($primary-color, 0.2);
+            border-color: rgba($primary-color, 0.3);
+            transform: scale(1.05);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+
+        i {
+            font-size: 20px;
+            color: $primary-color;
+        }
+    }
+
+    .navbar-brand {
+        padding: 0;
+        display: flex;
+        align-items: center;
+
+        .logo-img {
+            max-width: 150px;
+            height: 60px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            opacity: 1;
+            visibility: visible;
+            filter: none; // Remove white filter for colored logo
+        }
+
+        &:hover .logo-img {
+            transform: scale(1.05);
+        }
+    }
+
+    // When sidebar is expanded
+    .left-aside.expand &,
+    .left-aside.stay-open & {
+        width: 280px;
+
+        .navbar-brand .logo-img {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    // When sidebar is collapsed (only in aside)
+    .left-aside:not(.expand):not(.stay-open) & {
+        width: 80px;
+
+        .navbar-brand .logo-img {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+            margin: 0;
+        }
+    }
+}
+
+// For the nav bar logo container (always show logo)
+.nav-logo-container {
+    .navbar-brand .logo-img {
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 150px !important;
+        margin: 0 !important;
+    }
+}
+
+// Software name styling
+.software-name {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: $topbar-text;
+    margin-left: 25px; // Added left margin for better positioning
+
+    @media (max-width: 768px) {
+        font-size: 1.2rem !important;
+        margin: 0 10px;
+    }
+}
+
+// Start navbar =======================>
+.navbar {
+    &.primary {
+        z-index: 999;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: $topbar-bg;
+        padding: 8px 0;
+        box-shadow: $topbar-shadow;
+        border-bottom: 1px solid $topbar-border;
+        height: 70px;
+
+        .navbar-toggler {
+            color: $topbar-text;
+            border: 1px solid $topbar-border;
+            background: rgba($primary-color, 0.1);
+        }
+
+        .container-fluid {
+            padding: 0 25px; // Increased padding for better spacing
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-nav {
+            flex-direction: row;
+            align-items: center;
+            gap: 8px; // Added gap between nav items
+
+            .nav-item {
+                margin: 0;
+
+                .nav-link {
+                    width: 45px;
+                    height: 45px;
+                    text-align: center;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 18px;
+                    color: $topbar-text;
+                    background-color: #f8f9fa;
+                    transition: all 0.2s ease;
+                    border: 1px solid $topbar-border;
+                    line-height: 25px;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    &:hover {
+                        background-color: rgba($primary-color, 0.1);
+                        border-color: rgba($primary-color, 0.3);
+                        color: $primary-color;
+                        transform: translateY(-1px);
+                    }
+
+                    // Remove any transform animations that move other icons
+                    &:active,
+                    &:focus {
+                        transform: none; // Prevent movement on click
+                    }
+
+                    &.user-button {
+                        padding: 2px;
+                        border: 2px solid transparent;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 8px;
+                            object-fit: cover;
+                            transition: all 0.2s ease;
+                        }
+
+                        &:hover {
+                            border-color: rgba($primary-color, 0.3);
+
+                            img {
+                                transform: scale(1.05);
+                            }
+                        }
+                    }
+
+                    &.notification-button {
+                        position: relative;
+
+                        &::after {
+                            position: absolute;
+                            content: "";
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            background: $primary-color;
+                            top: 10px;
+                            right: 10px;
+                            border: 2px solid $topbar-bg;
+                            animation: pulse 2s infinite;
+                        }
+
+                        &.has-notifications::after {
+                            background: #dc3545; // Red color for notifications
+                        }
+                    }
+
+                    &.new-alerts::after {
+                        position: absolute;
+                        content: "";
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        background: $primary-color;
+                        top: 10px;
+                        right: 10px;
+                        border: 2px solid $topbar-bg;
+                        animation: pulse 2s infinite;
+                    }
+                }
+
+                &.dropdown {
+                    .dropdown-menu {
+                        background: $topbar-bg;
+                        border: 1px solid $topbar-border;
+                        border-radius: 10px;
+                        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+                        padding: 8px;
+                        margin-top: 8px;
+
+                        .dropdown-item {
+                            padding: 10px 14px;
+                            border-radius: 6px;
+                            color: $topbar-text;
+                            transition: all 0.2s ease;
+
+                            &:hover {
+                                background: rgba($primary-color, 0.1);
+                                color: $primary-color;
+                                transform: none; // Prevent movement
+                            }
+
+                            &.double-line {
+                                display: flex;
+                                align-items: center;
+                                gap: 12px;
+
+                                img {
+                                    width: 40px;
+                                    height: 40px;
+                                    border-radius: 8px;
+                                }
+
+                                div {
+                                    h5 {
+                                        margin: 0;
+                                        font-size: 14px;
+                                        font-weight: 600;
+                                        color: $topbar-text;
+                                    }
+
+                                    span {
+                                        font-size: 12px;
+                                        color: $topbar-text-muted;
+                                    }
+                                }
+                            }
+                        }
+
+                        hr {
+                            margin: 8px 0;
+                            border-color: $topbar-border;
+                        }
+                    }
+
+                    // Notification dropdown specific styles
+                    &.notification-dropdown {
+                        .dropdown-menu {
+                            min-width: 320px;
+
+                            .dropdown-header {
+                                display: flex;
+                                justify-content: between;
+                                align-items: center;
+                                padding: 10px 14px;
+
+                                h6 {
+                                    margin: 0;
+                                    font-weight: 600;
+                                    color: $topbar-text;
+                                }
+
+                                .badge {
+                                    background: $primary-color;
+                                    color: white;
+                                }
+                            }
+
+                            .notification-item {
+                                padding: 12px 14px;
+                                border-bottom: 1px solid $topbar-border;
+                                transition: all 0.2s ease;
+
+                                &:last-child {
+                                    border-bottom: none;
+                                }
+
+                                &:hover {
+                                    background: rgba($primary-color, 0.05);
+                                }
+
+                                .notification-content {
+                                    display: flex;
+                                    align-items: flex-start;
+                                    gap: 10px;
+
+                                    .notification-icon {
+                                        width: 32px;
+                                        height: 32px;
+                                        border-radius: 8px;
+                                        background: rgba($primary-color, 0.1);
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        color: $primary-color;
+                                        font-size: 14px;
+                                        flex-shrink: 0;
+                                    }
+
+                                    .notification-text {
+                                        flex: 1;
+
+                                        p {
+                                            margin: 0;
+                                            font-size: 13px;
+                                            color: $topbar-text;
+                                            line-height: 1.4;
+                                        }
+
+                                        small {
+                                            color: $topbar-text-muted;
+                                            font-size: 11px;
+                                        }
+                                    }
+                                }
+
+                                &.unread {
+                                    background: rgba($primary-color, 0.03);
+
+                                    .notification-content .notification-text p {
+                                        font-weight: 600;
+                                    }
+                                }
+                            }
+
+                            .dropdown-footer {
+                                padding: 10px 14px;
+                                text-align: center;
+
+                                a {
+                                    color: $primary-color;
+                                    text-decoration: none;
+                                    font-weight: 500;
+                                    font-size: 13px;
+
+                                    &:hover {
+                                        color: $primary-dark;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .nav-logo-container {
+                display: flex !important;
+                margin-left: 15px;
+            }
+
+            .software-name {
+                margin-left: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 0 15px;
+            }
+
+            .nav-logo-container {
+                .navbar-brand .logo-img {
+                    width: 120px !important;
+                }
+            }
+
+            .software-name {
+                font-size: 1.1rem !important;
+                margin: 0 5px;
+            }
+
+            .navbar-nav .nav-item {
+                .nav-link {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 16px;
+                }
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-logo-container {
+                .navbar-brand {
+                    display: none;
+                }
+            }
+
+            .software-name {
+                font-size: 1rem !important;
+                margin-left: 0;
+            }
+
+            .navbar-nav {
+                gap: 5px;
+
+                .nav-item .nav-link {
+                    width: 38px;
+                    height: 38px;
+                    font-size: 15px;
+                }
+            }
+        }
+
+        .search-bar {
+            position: absolute;
+            right: 0;
+            left: 0;
+            top: -100px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: $topbar-bg;
+            border-bottom: 1px solid $topbar-border;
+            padding: 10px 25px;
+
+            &.show {
+                top: 0;
+                z-index: 1000;
+            }
+
+            .form-control {
+                background: #f8f9fa;
+                color: $topbar-text;
+                border: 1px solid $topbar-border;
+
+                &::placeholder {
+                    color: $topbar-text-muted;
+                }
+
+                &:focus {
+                    border-color: rgba($primary-color, 0.5);
+                    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+                }
+            }
+
+            .close-button {
+                background: none;
+                border: none;
+                color: $topbar-text-muted;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+        }
+    }
+}
+
+// Updated Animations
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba($primary-color, 0.7);
+    }
+    70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 4px rgba($primary-color, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba($primary-color, 0);
+    }
+}
+
+// Ensure proper layering
+.navbar.primary {
+    z-index: 1000;
+}
+
+.top-logobar {
+    z-index: 1001;
+}
+
+// Adjust main content for fixed headers
+.main-bar {
+    margin-top: 70px;
+    min-height: calc(100vh - 70px);
+}
+
+// Service dropdown specific styles
+.service {
+    .dropdown-menu {
+        p {
+            color: $topbar-text;
+            font-size: 13px;
+            padding: 8px 12px;
+            margin: 0;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                a {
+                    padding: 8px 12px;
+                    color: $topbar-text;
+                    text-decoration: none;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    border-radius: 6px;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        background: rgba($primary-color, 0.1);
+                        color: $primary-color;
+                        transform: none; // Prevent movement
+                    }
+
+                    i {
+                        width: 16px;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Navbar layout improvements
+.navbar-brand {
+    display: flex;
+    align-items: center;
+
+    // Center the logo better in the navbar
+    .logo-img {
+        margin: 0 auto;
+        display: block;
+    }
+}
+
+// Ensure icons stay in place during interactions
+.navbar-nav .nav-item {
+    .nav-link {
+        // Remove any transform transitions that cause movement
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+
+        // Specifically disable transform transitions
+        &:hover {
+            transform: none !important;
+        }
+
+        &:active,
+        &:focus {
+            transform: none !important;
+        }
+    }
+}

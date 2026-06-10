@@ -1,0 +1,177 @@
+@use "../helpers" as *;
+@use 'sass:color';
+
+// button color
+
+.btn {
+    padding: 5px 15px;
+    border-radius: 5px;
+
+    &.btn-primary {
+        background-color: var(--theme-color);
+        border-color: var(--theme-color);
+        &:hover {
+            background-color: var(--theme-darken);
+        }
+    }
+
+    &.btn-primary-light {
+        background-color: var(--theme-light);
+        border-color: var(--theme-light);
+        color: var(--black-color);
+        &:hover {
+            background-color: var(--theme-color);
+        }
+    }
+
+    &.btn-light {
+        &:hover {
+            background-color: #eeeeee;
+        }
+    }
+
+    &.btn-success {
+        background-color: var(--success-color);
+        border-color: var(--success-color);
+        &:hover {
+            background-color: color.adjust($success-color, $lightness: -10%) !important;
+        }
+    }
+
+    &.btn-info {
+        color: #eeeeee;
+    }
+
+    &.btn-warning {
+        background-color: var(--warning-color);
+        border-color: var(--warning-color);
+        &:hover {
+            background-color: color.adjust($warning-color, $lightness: -10%) !important;
+        }
+    }
+
+    &.btn-danger {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+        &:hover {
+            background-color: color.adjust($danger-color, $lightness: -10%) !important;
+        }
+    }
+
+    &.btn-outline-primary {
+        border-color: var(--theme-color);
+        color: var(--theme-color);
+        &:hover {
+            background-color: var(--theme-color);
+            color: var(--white-color);
+        }
+    }
+
+    &.btn-outline-success {
+        border-color: var(--success-color);
+        color: var(--success-color);
+        &:hover {
+            background-color: var(--success-color);
+            color: var(--black-color);
+        }
+    }
+
+    &.btn-outline-warning {
+        border-color: var(--warning-color);
+        color: var(--warning-color);
+        &:hover {
+            background-color: var(--warning-color);
+            color: var(--black-color);
+        }
+    }
+
+    &.btn-outline-danger {
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+        &:hover {
+            background-color: var(--danger-color);
+            color: var(--white-color);
+        }
+    }
+
+    &.rounded {
+        border-radius: 50px !important;
+    }
+
+    &.sm {
+        padding: 3px 6px;
+        font-size: 14px;
+    }
+
+    &.icon {
+        padding: 0;
+        font-size: 18px;
+        color: var(--black-color);
+        transition: all ease 0.3s;
+        width: 35px;
+        height: 35px;
+        border-radius: 35px;
+        line-height: 35px;
+
+        &.lg {
+            font-size: 22px;
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            line-height: 40px;
+        }
+
+        &.sm {
+            font-size: 14px;
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            line-height: 30px;
+        }
+
+        &:hover {
+            background-color: var(--theme-color);
+            border: 1px solid var(--theme-color);
+            color: white;
+        }
+
+        &.danger {
+            color: color.adjust($danger-color, $lightness: -10%);
+            &:hover {
+                color: color.adjust($danger-color, $lightness: -20%);
+            }
+        }
+
+        &.warning {
+            color: color.adjust($warning-color, $lightness: -10%);
+            &:hover {
+                color: color.adjust($warning-color, $lightness: -20%);
+            }
+        }
+
+        &.success {
+            color: color.adjust($success-color, $lightness: -10%);
+            &:hover {
+                color: color.adjust($success-color, $lightness: -20%);
+            }
+        }
+
+        &:disabled {
+            border: none;
+            opacity: .5;
+        }
+
+        &:focus {
+            border: none;
+        }
+    }
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: $common-shadow;
+}
+
+.btn-check:checked + .btn-outline-primary {
+    background-color: var(--theme-color);
+}
