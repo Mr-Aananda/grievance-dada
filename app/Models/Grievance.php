@@ -56,8 +56,12 @@ class Grievance extends Model implements HasMedia
     {
         $this->addMediaCollection('grievance_images')
             ->acceptsMimeTypes([
-                'image/jpeg', 'image/jpg', 'image/png',
-                'image/gif',  'image/webp', 'image/bmp',
+                'image/jpeg',
+                'image/jpg',
+                'image/png',
+                'image/gif',
+                'image/webp',
+                'image/bmp',
             ])
             ->useDisk('grievance_media');
 
@@ -68,14 +72,19 @@ class Grievance extends Model implements HasMedia
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'application/vnd.ms-excel',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'text/plain', 'text/csv',
+                'text/plain',
+                'text/csv',
             ])
             ->useDisk('grievance_media');
 
         $this->addMediaCollection('grievance_videos')
             ->acceptsMimeTypes([
-                'video/mp4', 'video/avi', 'video/mov',
-                'video/wmv', 'video/mkv', 'video/webm',
+                'video/mp4',
+                'video/avi',
+                'video/mov',
+                'video/wmv',
+                'video/mkv',
+                'video/webm',
             ])
             ->useDisk('grievance_media');
     }
@@ -84,62 +93,75 @@ class Grievance extends Model implements HasMedia
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'submitted'     => 'Submitted',
-            'under_review'  => 'Under Review',
+            'submitted' => 'Submitted',
+            'under_review' => 'Under Review',
             'in_resolution' => 'In Resolution',
-            'resolved'      => 'Resolved',
-            default         => ucfirst($this->status),
+            'resolved' => 'Resolved',
+            default => ucfirst($this->status),
         };
     }
 
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'submitted'     => 'primary',
-            'under_review'  => 'warning',
+            'submitted' => 'primary',
+            'under_review' => 'warning',
             'in_resolution' => 'danger',
-            'resolved'      => 'success',
-            default         => 'secondary',
+            'resolved' => 'success',
+            default => 'secondary',
         };
     }
 
+    /**
+     * KEY FIX: Use route-based URLs instead of getUrl().
+     *
+     * getUrl() returns a path based on the disk's `url` config,
+     * which doesn't exist for a local D-drive disk — so the browser
+     * gets a broken or missing URL.
+     *
+     * Instead we route every media file through GrievanceMediaController
+     * which reads the file from disk and streams it properly.
+     */
     public function getAllMediaDataAttribute(): array
     {
         $files = [];
 
         foreach ($this->getMedia('grievance_images') as $media) {
             $files[] = [
-                'id'             => $media->id,
-                'type'           => 'image',
-                'file_name'      => $media->file_name,
-                'original_name'  => $media->name,
-                'size'           => $this->formatBytes($media->size),
-                'mime_type'      => $media->mime_type,
-                'url'            => $media->getUrl(),
+                'id' => $media->id,
+                'type' => 'image',
+                'file_name' => $media->file_name,
+                'original_name' => $media->name,
+                'size' => $this->formatBytes($media->size),
+                'mime_type' => $media->mime_type,
+                // Route through our streaming controller
+                'url' => route('grievance.media.stream', $media->id),
             ];
         }
 
         foreach ($this->getMedia('grievance_documents') as $media) {
             $files[] = [
-                'id'             => $media->id,
-                'type'           => 'document',
-                'file_name'      => $media->file_name,
-                'original_name'  => $media->name,
-                'size'           => $this->formatBytes($media->size),
-                'mime_type'      => $media->mime_type,
-                'url'            => $media->getUrl(),
+                'id' => $media->id,
+                'type' => 'document',
+                'file_name' => $media->file_name,
+                'original_name' => $media->name,
+                'size' => $this->formatBytes($media->size),
+                'mime_type' => $media->mime_type,
+                // Documents → controller sends Content-Disposition: attachment
+                'url' => route('grievance.media.stream', $media->id),
             ];
         }
 
         foreach ($this->getMedia('grievance_videos') as $media) {
             $files[] = [
-                'id'             => $media->id,
-                'type'           => 'video',
-                'file_name'      => $media->file_name,
-                'original_name'  => $media->name,
-                'size'           => $this->formatBytes($media->size),
-                'mime_type'      => $media->mime_type,
-                'url'            => $media->getUrl(),
+                'id' => $media->id,
+                'type' => 'video',
+                'file_name' => $media->file_name,
+                'original_name' => $media->name,
+                'size' => $this->formatBytes($media->size),
+                'mime_type' => $media->mime_type,
+                // Route through our streaming controller
+                'url' => route('grievance.media.stream', $media->id),
             ];
         }
 
@@ -149,7 +171,7 @@ class Grievance extends Model implements HasMedia
     // ── Ticket Generator ───────────────────────────────────────
     public static function generateTicketNumber(): string
     {
-        $year  = now()->format('Y');
+        $year = now()->format('Y');
         $count = self::withTrashed()->whereYear('created_at', $year)->count() + 1;
         return 'GRV-' . $year . '-' . str_pad($count, 5, '0', STR_PAD_LEFT);
     }
@@ -172,9 +194,10 @@ class Grievance extends Model implements HasMedia
 
     private function formatBytes(int $bytes, int $precision = 2): string
     {
-        if ($bytes === 0) return '0 B';
+        if ($bytes === 0)
+            return '0 B';
         $units = ['B', 'KB', 'MB', 'GB'];
-        $pow   = min(floor(log($bytes, 1024)), count($units) - 1);
+        $pow = min(floor(log($bytes, 1024)), count($units) - 1);
         return round($bytes / pow(1024, $pow), $precision) . ' ' . $units[$pow];
     }
 }

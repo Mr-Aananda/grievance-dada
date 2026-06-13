@@ -27,6 +27,9 @@ Route::get('/', [GrievanceController::class, 'index']);
 Route::resource('grievance', GrievanceController::class)
     ->only(['index', 'store', 'show']);
 
+Route::get('/grievance-media/{media}', [GrievanceController::class, 'stream'])
+    ->name('grievance.media.stream');
+
 // Route::get('/', fn() => redirect()->route('login'));
 
 Route::view('/maintenance', 'maintenance-page')->name('maintenance');

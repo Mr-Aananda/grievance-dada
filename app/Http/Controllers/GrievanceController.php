@@ -9,6 +9,8 @@ use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class GrievanceController extends Controller
 {
@@ -128,7 +130,91 @@ class GrievanceController extends Controller
         ]);
     }
 
+    /**
+     * GET /grievance-media/{media}
+     *
+     * Streams a media file from the configured disk (grievance_media)
+     * directly to the browser — image, video, or document.
+     *
+     * Images / videos → inline (browser can display / play)
+     * PDFs            → inline (browser renders in built-in PDF viewer)
+     * Other documents → forced download (Content-Disposition: attachment)
+     */
+    public function stream(Request $request, Media $media): StreamedResponse
+    {
+        $path = $media->getPath();
+
+        abort_unless(file_exists($path), 404, 'File not found.');
+
+        $mime = $media->mime_type ?: (mime_content_type($path) ?: 'application/octet-stream');
+        $fileName = $media->file_name;
+        $size = filesize($path);
+
+        $isInline = $this->shouldBeInline($mime);
+        $disposition = $isInline
+            ? 'inline'
+            : 'attachment; filename="' . addslashes($fileName) . '"';
+
+        // Support byte-range requests so <video> elements can seek
+        $start = 0;
+        $end = $size - 1;
+        $status = 200;
+
+        $rangeHeader = $request->header('Range');
+        if ($rangeHeader && preg_match('/bytes=(\d*)-(\d*)/i', $rangeHeader, $m)) {
+            $start = $m[1] !== '' ? (int) $m[1] : 0;
+            $end = $m[2] !== '' ? (int) $m[2] : $size - 1;
+            $end = min($end, $size - 1);
+            $status = 206;
+        }
+
+        $length = $end - $start + 1;
+
+        $headers = [
+            'Content-Type' => $mime,
+            'Content-Length' => $length,
+            'Content-Disposition' => $disposition,
+            'Content-Range' => "bytes {$start}-{$end}/{$size}",
+            'Accept-Ranges' => 'bytes',
+            'Cache-Control' => 'private, max-age=3600',
+            'X-Content-Type-Options' => 'nosniff',
+        ];
+
+        return response()->stream(function () use ($path, $start, $length) {
+            $handle = fopen($path, 'rb');
+
+            if ($start > 0) {
+                fseek($handle, $start);
+            }
+
+            $remaining = $length;
+            $chunkSize = 8192;
+
+            while (!feof($handle) && $remaining > 0) {
+                $read = min($chunkSize, $remaining);
+                $chunk = fread($handle, $read);
+                echo $chunk;
+                $remaining -= strlen($chunk);
+                ob_flush();
+                flush();
+            }
+
+            fclose($handle);
+        }, $status, $headers);
+    }
+
     // ── Private helpers ────────────────────────────────────────
+
+    /**
+     * Images, videos, and PDFs are rendered inline by the browser.
+     * Everything else triggers a download.
+     */
+    private function shouldBeInline(string $mime): bool
+    {
+        return str_starts_with($mime, 'image/')
+            || str_starts_with($mime, 'video/')
+            || $mime === 'application/pdf';
+    }
 
     private function resolveCollection(string $mime): string
     {
