@@ -1,169 +1,119 @@
-<!-- Start Navbar =================================== -->
+<nav class="app-header navbar navbar-expand bg-body">
+    <div class="container-fluid">
+        <!-- Start Left Navbar Links -->
+        <ul class="navbar-nav">
+            <!-- Sidebar toggle -->
+            <li class="nav-item">
+                <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button" title="Toggle Sidebar">
+                    <i class="bi bi-list"></i>
+                </a>
+            </li>
+            <!-- Dada Logo -->
+            <li class="nav-item d-flex align-items-center ms-2 me-3">
+                <a href="{{ route('dashboard') }}">
+                    <img src="{{ Vite::asset('resources/assets/images/logo/dada_bg.png') }}" alt="Dada Logo" style="max-height: 38px;">
+                </a>
+            </li>
+        </ul>
+        <!-- End Left Navbar Links -->
 
-<!-- Start Left logo area ======================================= -->
-<x-nav-logo-component />
-<!-- End Left logo area ======================================= -->
+        <!-- Start Right Navbar Links -->
+        <ul class="navbar-nav ms-auto align-items-center">
+            
+            <!-- Dark / Light Theme Mode Toggle -->
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="event.preventDefault(); themeColorChange();" role="button" title="Toggle Dark/Light Mode">
+                    <i class="bi bi-moon" id="bi-moon"></i>
+                </a>
+            </li>
 
-<!-- Start Navbar =================================== -->
-<header>
-    <nav class="navbar primary shadow-sm">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <!-- Start Left logo area ======================================= -->
-            <x-nav-logo-component />
+            <!-- Fullscreen Toggle -->
+            <li class="nav-item">
+                <a class="nav-link" data-lte-toggle="fullscreen" href="#" role="button" title="Toggle Fullscreen">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                </a>
+            </li>
 
-            <!-- Start navMenu ======================================= -->
-            <ul class="navbar-nav ms-auto mb-lg-0">
+            <!-- Services Dropdown Button -->
+            <li class="nav-item dropdown me-2">
+                <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Services">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li><span class="dropdown-header fw-bold">Services</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    @canany(['dashboard'])
+                        <li>
+                            <a class="dropdown-item" href="{{ route('dashboard') }}">
+                                <i class="bi bi-speedometer me-2 text-primary"></i> Dashboard
+                            </a>
+                        </li>
+                    @endcanany
 
-                <!-- Service button ======================================= -->
-                <li class="nav-item dropdown service">
-                    <a class="nav-link" href="#" role="button" id="service-dropdown" data-bs-toggle="dropdown"
-                        aria-expanded="false"><i class="bi bi-grid"></i></a>
-                    <div class="dropdown-menu" aria-labelledby="service-dropdown">
-                        <p class="fw-bold mb-0 px-2 border-bottom">Services</p>
-                        <ul>
-                            @canany(['dashboard'])
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('dashboard') }}">
-                                        <i class="bi bi-speedometer"></i>
-                                        <span>Dashboard </span>
-                                    </a>
-                                </li>
-                            @endcanany
+                    @canany(['user.index'])
+                        <li>
+                            <a class="dropdown-item" href="{{ route('user.index') }}">
+                                <i class="bi bi-people me-2 text-success"></i> Users
+                            </a>
+                        </li>
+                    @endcanany
 
-                            @canany(['user.index'])
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('user.index') }}">
-                                        <i class="bi bi-people"></i>
-                                        <span>Users</span>
-                                    </a>
-                                </li>
-                            @endcanany
+                    @canany(['role.index'])
+                        <li>
+                            <a class="dropdown-item" href="{{ route('role.index') }}">
+                                <i class="bi bi-shield-lock-fill me-2 text-danger"></i> Roles & Permissions
+                            </a>
+                        </li>
+                    @endcanany
+                </ul>
+            </li>
 
-                            @canany(['role.index'])
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('role.index') }}">
-                                        <i class="bi bi-shield-lock-fill"></i>
-                                        <span> Roles & Permissions </span>
-                                    </a>
-                                </li>
-                            @endcanany
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Notification button ======================================= -->
-                {{-- <li class="nav-item dropdown notification-dropdown">
-                    <a class="nav-link notification-button has-notifications" href="#" role="button"
-                        id="notification-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-bell"></i>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="notification-dropdown">
-                        <div class="dropdown-header d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">Notifications</h6>
-                            <span class="badge bg-primary">3</span>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="notification-item unread">
-                            <div class="notification-content">
-                                <div class="notification-icon">
-                                    <i class="bi bi-calendar-check"></i>
-                                </div>
-                                <div class="notification-text">
-                                    <p>New meeting scheduled for tomorrow</p>
-                                    <small>2 minutes ago</small>
-                                </div>
+            <!-- User profile Dropdown Menu -->
+            <li class="nav-item dropdown user-menu">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                    <img src="{{ Vite::asset('resources/assets/images/users/user.png') }}" class="user-image rounded-circle shadow-sm me-2" style="width: 1.6rem; height: 1.6rem; object-fit: cover;" alt="User Image">
+                    <span class="d-none d-md-inline fw-semibold">{{ auth()->user()?->name }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end shadow">
+                    <!-- User Profile Header -->
+                    <li class="user-header text-bg-primary text-center p-4">
+                        <img src="{{ Vite::asset('resources/assets/images/users/user.png') }}" class="rounded-circle shadow-sm mb-2" style="width: 5.5rem; height: 5.5rem; object-fit: cover;" alt="User Image">
+                        <p class="mb-0 fw-bold fs-5 text-white">
+                            {{ auth()->user()?->name }}
+                        </p>
+                        <small class="text-white-50">{{ auth()->user()?->roles->first()?->name ?? 'User' }}</small>
+                    </li>
+                    
+                    <!-- Menu Body (Profile & Support links) -->
+                    <li class="user-body p-3">
+                        <div class="row">
+                            <div class="col-6 text-center">
+                                <a href="{{ route('user.show', auth()->user()?->id) }}" class="btn btn-sm btn-outline-secondary w-100">
+                                    <i class="bi bi-person me-1"></i> Profile
+                                </a>
+                            </div>
+                            <div class="col-6 text-center">
+                                <a target="_blank" href="{{ route('help-and-support') }}" class="btn btn-sm btn-outline-secondary w-100">
+                                    <i class="bi bi-question-circle me-1"></i> Support
+                                </a>
                             </div>
                         </div>
-                        <div class="notification-item">
-                            <div class="notification-content">
-                                <div class="notification-icon">
-                                    <i class="bi bi-people"></i>
-                                </div>
-                                <div class="notification-text">
-                                    <p>You have been added to a project team</p>
-                                    <small>1 hour ago</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="notification-item">
-                            <div class="notification-content">
-                                <div class="notification-icon">
-                                    <i class="bi bi-chat"></i>
-                                </div>
-                                <div class="notification-text">
-                                    <p>New message from John Doe</p>
-                                    <small>3 hours ago</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="dropdown-footer">
-                            <a href="#">View all notifications</a>
-                        </div>
-                    </div>
-                </li> --}}
+                    </li>
+                    
+                    <!-- Menu Footer (Logout button) -->
+                    <li class="user-footer bg-body-secondary p-3 border-top d-flex justify-content-end">
+                        <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="bi bi-box-arrow-right me-1"></i> Logout
+                        </a>
+                        <form id="logout-form" class="d-none" action="{{ route('logout') }}" method="POST">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
+            </li>
 
-                <!-- User button ======================================= -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link user-button" href="#" role="button" id="user-dropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ Vite::asset('resources/assets/images/users/user.png') }}" alt="user">
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="user-dropdown">
-                        <ul>
-                            <li>
-                                <a class="dropdown-item double-line"
-                                    href="{{ route('user.show', auth()->user()?->id) }}">
-                                    <img src="{{ Vite::asset('resources/assets/images/users/user.png') }}"
-                                        alt="User Image">
-                                    <div>
-                                        <h5>{{ auth()->user()?->name }}</h5>
-                                        <span>{{ auth()->user()?->roles->first()?->name }}</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <hr>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('user.show', auth()->user()?->id) }}">
-                                    <i class="bi bi-gear"></i>
-                                    <span>Profile &amp; Settings</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" target="__blank" href="{{ route('help-and-support') }}">
-                                    <i class="bi bi-question-circle"></i>
-                                    <span>Help &amp; Support</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    Logout
-                                </a>
-                                <form id="logout-form" class="d-none" action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-            <!-- End navMenu ======================================= -->
-
-            <!-- Start search-bar =================================== -->
-            <div class="search-bar" id="search-bar">
-                <form class="h-100">
-                    <input class="form-control" id="search-input" type="text" placeholder="Search">
-                    <button type="button" class="close-button" onclick="searchFunction()"><i
-                            class="bi bi-x-lg"></i></button>
-                </form>
-            </div>
-            <!-- End search-bar =================================== -->
-
-        </div>
-    </nav>
-</header>
-<!-- End Navbar =================================== -->
+        </ul>
+        <!-- End Right Navbar Links -->
+    </div>
+</nav>
+<!-- End AdminLTE 4 Navbar =================================== -->

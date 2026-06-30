@@ -17,7 +17,7 @@ class AddInPermission
     public function handle(Request $request, Closure $next): Response
     {
         if (!in_array('permission.remove', Route::current()->action['middleware'], true)) {
-            abort_if(!auth()->user()->can(Route::currentRouteName()), 401);
+            abort_if(!auth()->user()->can(Route::currentRouteName()), 403);
         }
 
         return $next($request);

@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             SectionSeeder::class,
             UserSeeder::class,
             RoleSeeder::class,
-            ComplainTypeSeeder::class,
             CategorySeeder::class,
             // BuyerSeeder::class,
         ]);

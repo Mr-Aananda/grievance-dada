@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class CategorySeeder extends Seeder
 {
@@ -12,140 +13,69 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Category::truncate();
+        Schema::enableForeignKeyConstraints();
+
         $categories = [
-            // Buyer Complain Categories
             [
-                'name' => 'Order Delay',
-                'code' => 'ORDER_DELAY',
-                'note' => 'Delay in order processing or delivery',
+                'name' => 'Harassment & Discrimination',
+                'code' => 'HARASSMENT',
+                'note' => 'Incidents regarding workplace harassment, bullying, or discrimination',
                 'status' => true,
             ],
             [
-                'name' => 'Wrong Quantity',
-                'code' => 'WRONG_QTY',
-                'note' => 'Incorrect quantity shipped or produced',
+                'name' => 'Salary, Wages & Overtime',
+                'code' => 'WAGES_OVERTIME',
+                'note' => 'Disputes regarding pay calculations, late salaries, or overtime details',
                 'status' => true,
             ],
             [
-                'name' => 'Communication Issue',
-                'code' => 'COMM_ISSUE',
-                'note' => 'Poor communication with buyer',
+                'name' => 'Workplace Safety & Environment',
+                'code' => 'SAFETY_ENVIRONMENT',
+                'note' => 'Unhygienic toilets, heat, poor drinking water, or unsafe machines',
                 'status' => true,
             ],
             [
-                'name' => 'Payment Issue',
-                'code' => 'PAYMENT',
-                'note' => 'Payment related problems',
-                'status' => true,
-            ],
-
-            // Sewing Complain Categories
-            [
-                'name' => 'Machine Breakdown',
-                'code' => 'MACHINE_BREAK',
-                'note' => 'Sewing machine malfunction or breakdown',
+                'name' => 'Supervisor Behavior & Abuse',
+                'code' => 'SUPERVISOR_BEHAVIOR',
+                'note' => 'Abusive language, unfair treatment, or misbehavior from team leaders',
                 'status' => true,
             ],
             [
-                'name' => 'Thread Breakage',
-                'code' => 'THREAD_BREAK',
-                'note' => 'Frequent thread breakage issues',
+                'name' => 'Leave & Holiday Entitlements',
+                'code' => 'LEAVE_HOLIDAYS',
+                'note' => 'Issues related to holiday payments, sick leaves, or maternity leaves',
                 'status' => true,
             ],
             [
-                'name' => 'Operator Issue',
-                'code' => 'OPERATOR',
-                'note' => 'Problems with sewing operators',
+                'name' => 'Canteen & Canteen Food Quality',
+                'code' => 'CANTEEN_QUALITY',
+                'note' => 'Complaints about factory canteen food, hygiene, or prices',
                 'status' => true,
             ],
             [
-                'name' => 'Production Delay',
-                'code' => 'PROD_DELAY',
-                'note' => 'Delay in sewing production line',
+                'name' => 'Health & Medical Support',
+                'code' => 'MEDICAL_SUPPORT',
+                'note' => 'Lack of medicine, clinic support, or slow emergency response',
                 'status' => true,
             ],
             [
-                'name' => 'Stitching Defect',
-                'code' => 'STITCH_DEFECT',
-                'note' => 'Defects in stitching quality',
-                'status' => true,
-            ],
-
-            // Quality Complain Categories
-            [
-                'name' => 'Fabric Defect',
-                'code' => 'FABRIC_DEFECT',
-                'note' => 'Defects in fabric quality',
+                'name' => 'Factory Transport & Commute',
+                'code' => 'FACTORY_TRANSPORT',
+                'note' => 'Delayed factory buses, driver misbehavior, or route problems',
                 'status' => true,
             ],
             [
-                'name' => 'Measurement Issue',
-                'code' => 'MEASUREMENT',
-                'note' => 'Incorrect measurements or sizing',
+                'name' => 'Suggestions & Improvements',
+                'code' => 'SUGGESTIONS',
+                'note' => 'Positive suggestions for factory operations and worker welfare',
                 'status' => true,
             ],
             [
-                'name' => 'Color Issue',
-                'code' => 'COLOR_ISSUE',
-                'note' => 'Color mismatch or bleeding',
-                'status' => true,
-            ],
-            [
-                'name' => 'Finishing Defect',
-                'code' => 'FINISHING',
-                'note' => 'Problems in garment finishing',
-                'status' => true,
-            ],
-            [
-                'name' => 'Accessories Issue',
-                'code' => 'ACCESSORIES',
-                'note' => 'Defective or wrong accessories',
-                'status' => true,
-            ],
-
-            // Other Complain Categories
-            [
-                'name' => 'Transportation',
-                'code' => 'TRANSPORT',
-                'note' => 'Transportation and logistics issues',
-                'status' => true,
-            ],
-            [
-                'name' => 'Raw Material',
-                'code' => 'RAW_MATERIAL',
-                'note' => 'Raw material supply problems',
-                'status' => true,
-            ],
-            [
-                'name' => 'Power Issue',
-                'code' => 'POWER',
-                'note' => 'Electricity or power supply problems',
-                'status' => true,
-            ],
-            [
-                'name' => 'Safety Issue',
-                'code' => 'SAFETY',
-                'note' => 'Workplace safety concerns',
-                'status' => true,
-            ],
-
-            // New Categories
-            [
-                'name' => 'Repair',
-                'code' => 'REPAIR',
-                'note' => 'Repair and rework related issues',
-                'status' => true,
-            ],
-            [
-                'name' => 'Remake',
-                'code' => 'REMAKE',
-                'note' => 'Complete remake of products or parts',
-                'status' => true,
-            ],
-            [
-                'name' => 'Any Others',
-                'code' => 'ANY_OTHERS',
-                'note' => 'Any others miscellaneous issues not covered elsewhere',
+                'name' => 'Other General Complaints',
+                'code' => 'OTHER_COMPLAINTS',
+                'note' => 'Any other worker complains or miscellaneous issues',
                 'status' => true,
             ],
         ];
@@ -154,6 +84,6 @@ class CategorySeeder extends Seeder
             Category::create($category);
         }
 
-        $this->command->info('✅ Categories seeded successfully!');
+        $this->command->info('✅ GMS Categories seeded successfully!');
     }
 }

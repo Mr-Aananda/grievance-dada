@@ -32,4 +32,9 @@ class Department extends Model
         return $this->hasMany(User::class);
     }
 
+    public function grievances()
+    {
+        return $this->hasMany(Grievance::class);
+    }
+
 }

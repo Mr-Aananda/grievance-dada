@@ -1,552 +1,303 @@
-@section('title', 'Dashboard - Complain Management')
+@section('title', 'Dashboard')
 
 <x-app-layout>
-    <div class="container-fluid py-1 px-2 px-lg-3" x-data="dashboard()" x-init="init()">
-        <!-- Header with Date/Time on Right -->
-        <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-2 pb-1 border-bottom">
-            <!-- Left Section: Welcome -->
-            <div>
-                <h2 class="fw-bold text-dark mb-0">QMS Dashboard</h2>
-                <p class="text-muted mb-0">Welcome back, <span
-                        class="text-primary fw-bold">{{ auth()->user()->name }}</span></p>
-            </div>
 
-            <!-- Right Section: Date & Time -->
-            <div class="mt-2 mt-md-0">
-                <div class="d-flex align-items-center bg-light rounded-3 px-3 py-1">
-                    <i class="bi bi-calendar3 text-primary me-2 fs-5"></i>
-                    <div class="text-end">
-                        <small class="text-muted d-block lh-1">{{ \Carbon\Carbon::now()->format('l') }}</small>
-                        <span class="fw-bold">{{ \Carbon\Carbon::now()->format('d M, Y - h:i A') }}</span>
-                    </div>
-                </div>
+{{-- ═══ STAT CARDS ═══ --}}
+<div class="row g-3 mb-4">
+
+    {{-- Submitted --}}
+    <div class="col-lg-3 col-6">
+        <div class="small-box" style="background: linear-gradient(135deg,#4361ee,#3a0ca3); color:#fff; border-radius:14px; overflow:hidden; box-shadow:0 6px 20px rgba(67,97,238,.35);">
+            <div class="inner" style="color:#fff !important;">
+                <h3 style="color:#fff !important; font-size:2.2rem; font-weight:800;">{{ $stats['submitted'] }}</h3>
+                <p style="color:rgba(255,255,255,.85) !important; font-size:.9rem; font-weight:600;">New Submitted</p>
             </div>
+            <i class="small-box-icon bi bi-inbox-fill" style="color:rgba(255,255,255,.18);"></i>
+            <a href="{{ route('admin.grievance.index', ['status' => 'submitted']) }}"
+               style="background:rgba(0,0,0,.15); color:#fff; display:block; padding:6px 14px; font-size:.8rem; text-decoration:none;">
+                View all &nbsp;<i class="bi bi-arrow-right-short"></i>
+            </a>
         </div>
+    </div>
 
-        <!-- Main Dashboard Content - Monthly & Yearly Side by Side -->
-        <div class="row g-3">
-            <!-- LEFT SIDE - MONTHLY STATISTICS -->
-            <div class="col-lg-6">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <h4 class="fw-bold text-primary mb-0 fs-4"><i class="bi bi-calendar-month me-2"></i>Monthly
-                        Statistics</h4>
-                    <div>
-                        <input type="month" class="form-control form-control-sm bg-light border-0"
-                            style="width: 160px;" x-model="monthFilter" @change="applyMonthlyFilter()">
-                    </div>
-                </div>
-
-                <!-- Monthly Complain -->
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-header bg-white border-0 py-2">
-                        <h5 class="fw-bold mb-0 fs-5"><i class="bi bi-chat-dots-fill text-primary me-2"></i>Complain -
-                            Monthly</h5>
-                    </div>
-                    <div class="card-body pt-0 pb-2">
-                        <div class="bg-light bg-opacity-50 rounded-3 p-2">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-primary fs-5">Total: <span class="fs-4"
-                                        x-text="monthlyComplainTotal">0</span></span>
-                                <small class="text-muted fs-6" x-text="monthFilterDisplay"></small>
-                            </div>
-
-                            <div class="row g-1">
-                                @foreach ($complainTypeItems as $index => $type)
-                                    @php
-                                        $typeName = strtolower(str_replace(' ', '_', $type->name));
-                                        $colors = [
-                                            'primary',
-                                            'warning',
-                                            'info',
-                                            'success',
-                                            'danger',
-                                            'secondary',
-                                            'dark',
-                                        ];
-                                        $color = $colors[$index % count($colors)];
-                                        $isClaimType = $type->name == 'Claim';
-                                    @endphp
-                                    <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                                        <div class="border rounded-3 p-2 bg-white text-center shadow-sm">
-                                            <div class="display-4 fw-bolder text-{{ $color }} lh-1 mb-1"
-                                                x-text="getMonthlyComplainCount('{{ $typeName }}')">0</div>
-                                            <div class="fw-bold text-dark fs-6 mb-1">{{ $type->name }}</div>
-
-                                            <!-- Qty and TA Section - Only shows for Claim type and only if data exists -->
-                                            @if ($isClaimType)
-                                                <template
-                                                    x-if="getMonthlyComplainQty('{{ $typeName }}') > 0 || getMonthlyComplainAmount('{{ $typeName }}') > 0">
-                                                    <div
-                                                        class="mt-1 pt-1 border-top d-flex justify-content-center gap-2 small fw-medium">
-                                                        <template
-                                                            x-if="getMonthlyComplainQty('{{ $typeName }}') > 0">
-                                                            <span class="text-secondary"><span class="fw-bold">Q:</span>
-                                                                <span class="fw-bold"
-                                                                    x-text="getMonthlyComplainQty('{{ $typeName }}')"></span></span>
-                                                        </template>
-                                                        <template
-                                                            x-if="getMonthlyComplainAmount('{{ $typeName }}') > 0">
-                                                            <span class="text-success"><span class="fw-bold">TA:</span>
-                                                                <span class="fw-bold"
-                                                                    x-text="formatNumber(getMonthlyComplainAmount('{{ $typeName }}'))"></span></span>
-                                                        </template>
-                                                    </div>
-                                                </template>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Monthly Manual -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-0 py-2">
-                        <h5 class="fw-bold mb-0 fs-5"><i
-                                class="bi bi-file-earmark-text-fill text-primary me-2"></i>Manual - Monthly</h5>
-                    </div>
-                    <div class="card-body pt-0 pb-2">
-                        <div class="bg-light bg-opacity-50 rounded-3 p-2">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-primary fs-5">Total: <span class="fs-4"
-                                        x-text="monthlyManualTotal">0</span></span>
-                                <small class="text-muted fs-6" x-text="monthFilterDisplay"></small>
-                            </div>
-
-                            <div class="row g-1">
-                                @foreach ($manualTypeItems as $index => $type)
-                                    @php
-                                        $typeName = strtolower(str_replace(' ', '_', $type->name));
-                                        $colors = [
-                                            'danger',
-                                            'success',
-                                            'primary',
-                                            'warning',
-                                            'secondary',
-                                            'info',
-                                            'dark',
-                                        ];
-                                        $color = $colors[$index % count($colors)];
-                                        $isClaimType = $type->name == 'Claim';
-                                    @endphp
-                                    <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                                        <div class="border rounded-3 p-2 bg-white text-center shadow-sm">
-                                            <div class="display-4 fw-bolder text-{{ $color }} lh-1 mb-1"
-                                                x-text="getMonthlyManualCount('{{ $typeName }}')">0</div>
-                                            <div class="fw-bold text-dark fs-6 mb-1">{{ $type->name }}</div>
-
-                                            <!-- Qty and TA Section - Only shows for Claim type and only if data exists -->
-                                            @if ($isClaimType)
-                                                <template
-                                                    x-if="getMonthlyManualQty('{{ $typeName }}') > 0 || getMonthlyManualAmount('{{ $typeName }}') > 0">
-                                                    <div
-                                                        class="mt-1 pt-1 border-top d-flex justify-content-center gap-2 small fw-medium">
-                                                        <template
-                                                            x-if="getMonthlyManualQty('{{ $typeName }}') > 0">
-                                                            <span class="text-secondary"><span class="fw-bold">Q:</span>
-                                                                <span class="fw-bold"
-                                                                    x-text="getMonthlyManualQty('{{ $typeName }}')"></span></span>
-                                                        </template>
-                                                        <template
-                                                            x-if="getMonthlyManualAmount('{{ $typeName }}') > 0">
-                                                            <span class="text-success"><span class="fw-bold">TA:</span>
-                                                                <span class="fw-bold"
-                                                                    x-text="formatNumber(getMonthlyManualAmount('{{ $typeName }}'))"></span></span>
-                                                        </template>
-                                                    </div>
-                                                </template>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    {{-- Under Review --}}
+    <div class="col-lg-3 col-6">
+        <div class="small-box" style="background: linear-gradient(135deg,#f77f00,#d62828); color:#fff; border-radius:14px; overflow:hidden; box-shadow:0 6px 20px rgba(247,127,0,.35);">
+            <div class="inner" style="color:#fff !important;">
+                <h3 style="color:#fff !important; font-size:2.2rem; font-weight:800;">{{ $stats['under_review'] }}</h3>
+                <p style="color:rgba(255,255,255,.85) !important; font-size:.9rem; font-weight:600;">Under Review</p>
             </div>
-
-            <!-- RIGHT SIDE - YEARLY STATISTICS -->
-            <div class="col-lg-6">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <h4 class="fw-bold text-success mb-0 fs-4"><i class="bi bi-calendar4 me-2"></i>Yearly Statistics
-                    </h4>
-                    <div class="d-flex gap-1">
-                        <input type="number" class="form-control form-control-sm bg-light border-0"
-                            style="width: 80px;" x-model="yearFilter" min="2000" max="2100" placeholder="YYYY"
-                            @keyup.enter="applyYearlyFilter()">
-                        <button class="btn btn-sm btn-success" type="button" @click="applyYearlyFilter()">
-                            <i class="bi bi-search"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" @click="resetYearlyFilter()">
-                            <i class="bi bi-arrow-clockwise"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Yearly Complain -->
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-header bg-white border-0 py-2">
-                        <h5 class="fw-bold mb-0 fs-5"><i class="bi bi-chat-dots-fill text-success me-2"></i>Complain -
-                            Yearly</h5>
-                    </div>
-                    <div class="card-body pt-0 pb-2">
-                        <div class="bg-light bg-opacity-50 rounded-3 p-2">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-success fs-5">Total: <span class="fs-4"
-                                        x-text="yearlyComplainTotal">0</span></span>
-                                <small class="text-muted fs-6" x-text="yearFilterDisplay"></small>
-                            </div>
-
-                            <div class="row g-1">
-                                @foreach ($complainTypeItems as $index => $type)
-                                    @php
-                                        $typeName = strtolower(str_replace(' ', '_', $type->name));
-                                        $colors = [
-                                            'primary',
-                                            'warning',
-                                            'info',
-                                            'success',
-                                            'danger',
-                                            'secondary',
-                                            'dark',
-                                        ];
-                                        $color = $colors[$index % count($colors)];
-                                        $isClaimType = $type->name == 'Claim';
-                                    @endphp
-                                    <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                                        <div class="border rounded-3 p-2 bg-white text-center shadow-sm">
-                                            <div class="display-4 fw-bolder text-{{ $color }} lh-1 mb-1"
-                                                x-text="getYearlyComplainCount('{{ $typeName }}')">0</div>
-                                            <div class="fw-bold text-dark fs-6 mb-1">{{ $type->name }}</div>
-
-                                            <!-- Qty and TA Section - Only shows for Claim type and only if data exists -->
-                                            @if ($isClaimType)
-                                                <template
-                                                    x-if="getYearlyComplainQty('{{ $typeName }}') > 0 || getYearlyComplainAmount('{{ $typeName }}') > 0">
-                                                    <div
-                                                        class="mt-1 pt-1 border-top d-flex justify-content-center gap-2 small fw-medium">
-                                                        <template
-                                                            x-if="getYearlyComplainQty('{{ $typeName }}') > 0">
-                                                            <span class="text-secondary"><span
-                                                                    class="fw-bold">Q:</span> <span class="fw-bold"
-                                                                    x-text="getYearlyComplainQty('{{ $typeName }}')"></span></span>
-                                                        </template>
-                                                        <template
-                                                            x-if="getYearlyComplainAmount('{{ $typeName }}') > 0">
-                                                            <span class="text-success"><span
-                                                                    class="fw-bold">TA:</span> <span class="fw-bold"
-                                                                    x-text="formatNumber(getYearlyComplainAmount('{{ $typeName }}'))"></span></span>
-                                                        </template>
-                                                    </div>
-                                                </template>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Yearly Manual -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-0 py-2">
-                        <h5 class="fw-bold mb-0 fs-5"><i
-                                class="bi bi-file-earmark-text-fill text-success me-2"></i>Manual - Yearly</h5>
-                    </div>
-                    <div class="card-body pt-0 pb-2">
-                        <div class="bg-light bg-opacity-50 rounded-3 p-2">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-success fs-5">Total: <span class="fs-4"
-                                        x-text="yearlyManualTotal">0</span></span>
-                                <small class="text-muted fs-6" x-text="yearFilterDisplay"></small>
-                            </div>
-
-                            <div class="row g-1">
-                                @foreach ($manualTypeItems as $index => $type)
-                                    @php
-                                        $typeName = strtolower(str_replace(' ', '_', $type->name));
-                                        $colors = [
-                                            'danger',
-                                            'success',
-                                            'primary',
-                                            'warning',
-                                            'secondary',
-                                            'info',
-                                            'dark',
-                                        ];
-                                        $color = $colors[$index % count($colors)];
-                                        $isClaimType = $type->name == 'Claim';
-                                    @endphp
-                                    <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                                        <div class="border rounded-3 p-2 bg-white text-center shadow-sm">
-                                            <div class="display-4 fw-bolder text-{{ $color }} lh-1 mb-1"
-                                                x-text="getYearlyManualCount('{{ $typeName }}')">0</div>
-                                            <div class="fw-bold text-dark fs-6 mb-1">{{ $type->name }}</div>
-
-                                            <!-- Qty and TA Section - Only shows for Claim type and only if data exists -->
-                                            @if ($isClaimType)
-                                                <template
-                                                    x-if="getYearlyManualQty('{{ $typeName }}') > 0 || getYearlyManualAmount('{{ $typeName }}') > 0">
-                                                    <div
-                                                        class="mt-1 pt-1 border-top d-flex justify-content-center gap-2 small fw-medium">
-                                                        <template
-                                                            x-if="getYearlyManualQty('{{ $typeName }}') > 0">
-                                                            <span class="text-secondary"><span
-                                                                    class="fw-bold">Q:</span> <span class="fw-bold"
-                                                                    x-text="getYearlyManualQty('{{ $typeName }}')"></span></span>
-                                                        </template>
-                                                        <template
-                                                            x-if="getYearlyManualAmount('{{ $typeName }}') > 0">
-                                                            <span class="text-success"><span
-                                                                    class="fw-bold">TA:</span> <span class="fw-bold"
-                                                                    x-text="formatNumber(getYearlyManualAmount('{{ $typeName }}'))"></span></span>
-                                                        </template>
-                                                    </div>
-                                                </template>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <i class="small-box-icon bi bi-eye-fill" style="color:rgba(255,255,255,.18);"></i>
+            <a href="{{ route('admin.grievance.index', ['status' => 'under_review']) }}"
+               style="background:rgba(0,0,0,.15); color:#fff; display:block; padding:6px 14px; font-size:.8rem; text-decoration:none;">
+                View all &nbsp;<i class="bi bi-arrow-right-short"></i>
+            </a>
         </div>
+    </div>
 
-        <!-- Quick Actions -->
-        <div class="row g-2 mt-2">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-0 py-2">
-                        <h5 class="fw-bold mb-0 fs-5"><i
-                                class="bi bi-lightning-charge-fill text-warning me-2"></i>Quick Actions</h5>
+    {{-- In Resolution --}}
+    <div class="col-lg-3 col-6">
+        <div class="small-box" style="background: linear-gradient(135deg,#e040fb,#7c4dff); color:#fff; border-radius:14px; overflow:hidden; box-shadow:0 6px 20px rgba(224,64,251,.30);">
+            <div class="inner" style="color:#fff !important;">
+                <h3 style="color:#fff !important; font-size:2.2rem; font-weight:800;">{{ $stats['in_resolution'] }}</h3>
+                <p style="color:rgba(255,255,255,.85) !important; font-size:.9rem; font-weight:600;">In Resolution</p>
+            </div>
+            <i class="small-box-icon bi bi-tools" style="color:rgba(255,255,255,.18);"></i>
+            <a href="{{ route('admin.grievance.index', ['status' => 'in_resolution']) }}"
+               style="background:rgba(0,0,0,.15); color:#fff; display:block; padding:6px 14px; font-size:.8rem; text-decoration:none;">
+                View all &nbsp;<i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+    </div>
+
+    {{-- Resolved --}}
+    <div class="col-lg-3 col-6">
+        <div class="small-box" style="background: linear-gradient(135deg,#06d6a0,#118ab2); color:#fff; border-radius:14px; overflow:hidden; box-shadow:0 6px 20px rgba(6,214,160,.35);">
+            <div class="inner" style="color:#fff !important;">
+                <h3 style="color:#fff !important; font-size:2.2rem; font-weight:800;">{{ $stats['resolved'] }}</h3>
+                <p style="color:rgba(255,255,255,.85) !important; font-size:.9rem; font-weight:600;">Resolved</p>
+            </div>
+            <i class="small-box-icon bi bi-check-circle-fill" style="color:rgba(255,255,255,.18);"></i>
+            <a href="{{ route('admin.grievance.index', ['status' => 'resolved']) }}"
+               style="background:rgba(0,0,0,.15); color:#fff; display:block; padding:6px 14px; font-size:.8rem; text-decoration:none;">
+                View all &nbsp;<i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{{-- ═══ CHARTS + TABLE ROW ═══ --}}
+<div class="row g-3 mb-4">
+
+    {{-- Category Doughnut Chart --}}
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
+                <i class="bi bi-tags-fill text-primary me-2"></i>
+                <h6 class="mb-0 fw-bold">Category Distribution</h6>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center" style="min-height:270px;">
+                @if(count($categoryStats) > 0 && $stats['total'] > 0)
+                    <canvas id="categoryChart" style="max-height:240px;"></canvas>
+                @else
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-pie-chart" style="font-size:2rem; opacity:.3;"></i>
+                        <p class="mt-2 small">No data yet</p>
                     </div>
-                    <div class="card-body pt-0 py-2">
-                        <div class="row g-2">
-                            <div class="col">
-                                <a href="{{ route('complain.create') }}?type=complain" class="btn btn-primary w-100">
-                                    <i class="bi bi-chat-dots-fill fs-5 d-block mb-1"></i>
-                                    <span class="fw-semibold">Add Complain</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a href="{{ route('complain.manual') }}?type=manual" class="btn btn-warning w-100">
-                                    <i class="bi bi-file-earmark-text-fill fs-5 d-block mb-1"></i>
-                                    <span class="fw-semibold">Add Manual</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a href="{{ route('complain.index') }}" class="btn btn-success w-100">
-                                    <i class="bi bi-list-ul fs-5 d-block mb-1"></i>
-                                    <span class="fw-semibold">View All</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
 
-    <style>
-        .display-4 {
-            font-size: 2.5rem !important;
-            font-weight: 700 !important;
-            line-height: 1;
-        }
+    {{-- Department Horizontal Bar Chart --}}
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
+                <i class="bi bi-building-fill text-success me-2"></i>
+                <h6 class="mb-0 fw-bold">Department Distribution</h6>
+            </div>
+            <div class="card-body" style="min-height:270px;">
+                @if(count($departmentStats) > 0 && $stats['total'] > 0)
+                    <canvas id="departmentChart"></canvas>
+                @else
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <div class="text-center">
+                            <i class="bi bi-bar-chart" style="font-size:2rem; opacity:.3;"></i>
+                            <p class="mt-2 small">No data yet</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 
-        .container-fluid {
-            max-width: 100%;
-        }
-    </style>
+    {{-- Summary Totals --}}
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
+                <i class="bi bi-bar-chart-line-fill text-warning me-2"></i>
+                <h6 class="mb-0 fw-bold">Summary</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small fw-semibold text-muted">Total Grievances</span>
+                        <span class="badge rounded-pill" style="background:#4361ee; color:#fff; font-size:.85rem; padding:5px 12px;">{{ $stats['total'] }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small fw-semibold text-muted">Today's</span>
+                        <span class="badge rounded-pill bg-secondary" style="font-size:.85rem; padding:5px 12px;">{{ $stats['today_total'] }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small fw-semibold text-muted">Today Resolved</span>
+                        <span class="badge rounded-pill" style="background:#06d6a0; color:#fff; font-size:.85rem; padding:5px 12px;">{{ $todayResolved }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center py-2">
+                        <span class="small fw-semibold text-muted">Today's Growth</span>
+                        <span class="badge rounded-pill {{ $todayGrowth >= 0 ? 'bg-success' : 'bg-danger' }}" style="font-size:.85rem; padding:5px 12px;">
+                            {{ $todayGrowth >= 0 ? '+' : '' }}{{ $todayGrowth }}%
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        function dashboard() {
-            return {
-                loading: false,
-                // Monthly filter
-                monthFilter: new Date().toISOString().slice(0, 7),
-                monthFilterDisplay: '{{ $currentMonthName }} {{ $currentYear }}',
+</div>
 
-                // Yearly filter
-                yearFilter: new Date().getFullYear().toString(),
-                yearFilterDisplay: '{{ $currentYear }}',
+{{-- ═══ RECENT GRIEVANCES TABLE ═══ --}}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" style="border-radius:14px;">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center justify-content-between py-3">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-clock-history text-primary me-2"></i>
+                    <h6 class="mb-0 fw-bold">Recent Grievances</h6>
+                </div>
+                <a href="{{ route('admin.grievance.index') }}" class="btn btn-sm btn-outline-primary" style="border-radius:8px; font-size:.8rem;">
+                    View All <i class="bi bi-arrow-right-short"></i>
+                </a>
+            </div>
+            <div class="card-body p-0 table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Ticket #</th>
+                            <th>Category</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($recentGrievances as $g)
+                            <tr>
+                                <td class="ps-4">
+                                    <a href="{{ route('admin.grievance.show', $g->id) }}" class="fw-bold text-decoration-none text-primary">{{ $g->ticket_number }}</a>
+                                </td>
+                                <td class="small">{{ $g->category->name ?? '—' }}</td>
+                                <td class="small text-muted">{{ $g->department->name ?? '—' }}</td>
+                                <td>
+                                    <span class="badge rounded-pill bg-{{ $g->status_badge }}" style="font-size:.75rem; padding:4px 10px;">{{ $g->status_label }}</span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ $g->created_at->format('d M Y') }}</small>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No grievances recorded yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-                // Monthly stats data
-                monthlyComplainData: @json($monthlyComplainStats),
-                monthlyManualData: @json($monthlyManualStats),
-                monthlyComplainTotal: {{ $monthlyComplainTotal }},
-                monthlyManualTotal: {{ $monthlyManualTotal }},
+@push('script')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-                // Yearly stats data
-                yearlyComplainData: @json($yearlyComplainStats),
-                yearlyManualData: @json($yearlyManualStats),
-                yearlyComplainTotal: {{ $yearlyComplainTotal }},
-                yearlyManualTotal: {{ $yearlyManualTotal }},
-
-                init() {},
-
-                // Format number with 2 decimal places
-                formatNumber(value) {
-                    return Number(value).toFixed(2);
-                },
-
-                // Monthly filter methods
-                async applyMonthlyFilter() {
-                    try {
-                        this.loading = true;
-
-                        if (!this.monthFilter) {
-                            alert('Please select a month');
-                            this.loading = false;
-                            return;
-                        }
-
-                        const response = await fetch('{{ route('dashboard.monthly-stats') }}?month=' + this
-                            .monthFilter, {
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        const data = await response.json();
-
-                        if (data.success && data.filter_type === 'monthly') {
-                            this.monthlyComplainData = data.data.complain;
-                            this.monthlyManualData = data.data.manual;
-                            this.monthlyComplainTotal = data.data.totals.complain;
-                            this.monthlyManualTotal = data.data.totals.manual;
-                            this.monthFilterDisplay = data.filter_display;
-                        } else {
-                            throw new Error(data.message || 'Failed to load data');
-                        }
-                    } catch (error) {
-                        console.error('Error fetching monthly statistics:', error);
-                        alert('Failed to load monthly statistics: ' + error.message);
-                    } finally {
-                        this.loading = false;
+    // ─── Category Doughnut ───
+    @if(count($categoryStats) > 0 && $stats['total'] > 0)
+    const catLabels = @json(array_column($categoryStats, 'name'));
+    const catData   = @json(array_column($categoryStats, 'count'));
+    const catColors = [
+        '#4361ee','#f77f00','#06d6a0','#7209b7','#d62828',
+        '#118ab2','#e9c46a','#2a9d8f','#e76f51','#457b9d'
+    ];
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'doughnut',
+        data: {
+            labels: catLabels,
+            datasets: [{
+                data: catData,
+                backgroundColor: catColors,
+                borderWidth: 2,
+                borderColor: '#fff',
+                hoverOffset: 8,
+            }]
+        },
+        options: {
+            cutout: '62%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: { size: 11 },
+                        boxWidth: 12,
+                        padding: 12,
                     }
                 },
-
-                resetMonthlyFilter() {
-                    this.monthFilter = new Date().toISOString().slice(0, 7);
-                    this.monthlyComplainData = @json($monthlyComplainStats);
-                    this.monthlyManualData = @json($monthlyManualStats);
-                    this.monthlyComplainTotal = {{ $monthlyComplainTotal }};
-                    this.monthlyManualTotal = {{ $monthlyManualTotal }};
-                    this.monthFilterDisplay = '{{ $currentMonthName }} {{ $currentYear }}';
-                },
-
-                // Yearly filter methods
-                async applyYearlyFilter() {
-                    try {
-                        this.loading = true;
-
-                        if (!this.yearFilter) {
-                            alert('Please enter a year');
-                            this.loading = false;
-                            return;
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            const total = ctx.dataset.data.reduce((a,b) => a+b, 0);
+                            const pct   = total > 0 ? Math.round(ctx.raw / total * 100) : 0;
+                            return ` ${ctx.label}: ${ctx.raw} (${pct}%)`;
                         }
-
-                        const response = await fetch('{{ route('dashboard.monthly-stats') }}?year=' + this
-                        .yearFilter, {
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        const data = await response.json();
-
-                        if (data.success && data.filter_type === 'yearly') {
-                            this.yearlyComplainData = data.data.complain;
-                            this.yearlyManualData = data.data.manual;
-                            this.yearlyComplainTotal = data.data.totals.complain;
-                            this.yearlyManualTotal = data.data.totals.manual;
-                            this.yearFilterDisplay = data.filter_display;
-                        } else {
-                            throw new Error(data.message || 'Failed to load data');
-                        }
-                    } catch (error) {
-                        console.error('Error fetching yearly statistics:', error);
-                        alert('Failed to load yearly statistics: ' + error.message);
-                    } finally {
-                        this.loading = false;
                     }
-                },
-
-                resetYearlyFilter() {
-                    this.yearFilter = new Date().getFullYear().toString();
-                    this.yearlyComplainData = @json($yearlyComplainStats);
-                    this.yearlyManualData = @json($yearlyManualStats);
-                    this.yearlyComplainTotal = {{ $yearlyComplainTotal }};
-                    this.yearlyManualTotal = {{ $yearlyManualTotal }};
-                    this.yearFilterDisplay = '{{ $currentYear }}';
-                },
-
-                // Getters
-                getMonthlyComplainCount(typeName) {
-                    return this.monthlyComplainData[typeName]?.count || 0;
-                },
-
-                getMonthlyManualCount(typeName) {
-                    return this.monthlyManualData[typeName]?.count || 0;
-                },
-
-                getYearlyComplainCount(typeName) {
-                    return this.yearlyComplainData[typeName]?.count || 0;
-                },
-
-                getYearlyManualCount(typeName) {
-                    return this.yearlyManualData[typeName]?.count || 0;
-                },
-
-                getMonthlyComplainQty(typeName) {
-                    return this.monthlyComplainData[typeName]?.total_quantity || 0;
-                },
-
-                getMonthlyComplainAmount(typeName) {
-                    return this.monthlyComplainData[typeName]?.total_amount || 0;
-                },
-
-                getMonthlyManualQty(typeName) {
-                    return this.monthlyManualData[typeName]?.total_quantity || 0;
-                },
-
-                getMonthlyManualAmount(typeName) {
-                    return this.monthlyManualData[typeName]?.total_amount || 0;
-                },
-
-                getYearlyComplainQty(typeName) {
-                    return this.yearlyComplainData[typeName]?.total_quantity || 0;
-                },
-
-                getYearlyComplainAmount(typeName) {
-                    return this.yearlyComplainData[typeName]?.total_amount || 0;
-                },
-
-                getYearlyManualQty(typeName) {
-                    return this.yearlyManualData[typeName]?.total_quantity || 0;
-                },
-
-                getYearlyManualAmount(typeName) {
-                    return this.yearlyManualData[typeName]?.total_amount || 0;
                 }
             }
         }
-    </script>
+    });
+    @endif
+
+    // ─── Department Horizontal Bar ───
+    @if(count($departmentStats) > 0 && $stats['total'] > 0)
+    const deptLabels = @json(array_column($departmentStats, 'name'));
+    const deptData   = @json(array_column($departmentStats, 'count'));
+    const barColors  = [
+        'rgba(6,214,160,.8)','rgba(17,138,178,.8)','rgba(67,97,238,.8)',
+        'rgba(247,127,0,.8)','rgba(114,9,183,.8)','rgba(214,40,40,.8)',
+        'rgba(42,157,143,.8)','rgba(233,196,106,.8)','rgba(231,111,81,.8)',
+    ];
+    new Chart(document.getElementById('departmentChart'), {
+        type: 'bar',
+        data: {
+            labels: deptLabels,
+            datasets: [{
+                label: 'Grievances',
+                data: deptData,
+                backgroundColor: barColors,
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return ` ${ctx.raw} ticket${ctx.raw !== 1 ? 's' : ''}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { precision: 0, font: { size: 11 } },
+                    grid: { color: 'rgba(0,0,0,.06)' }
+                },
+                y: {
+                    ticks: { font: { size: 11 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+    @endif
+
+});
+</script>
+@endpush
+
 </x-app-layout>

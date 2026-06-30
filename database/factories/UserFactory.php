@@ -25,7 +25,21 @@ class UserFactory extends Factory
      */
     protected function getITDepartmentId(): int
     {
-        return Department::where('name', self::DEFAULT_DEPARTMENT_NAME)->value('id') ?? 1;
+        $dept = Department::where('name', self::DEFAULT_DEPARTMENT_NAME)->first();
+        if ($dept) {
+            return $dept->id;
+        }
+
+        $any = Department::first();
+        if ($any) {
+            return $any->id;
+        }
+
+        return Department::create([
+            'name' => self::DEFAULT_DEPARTMENT_NAME,
+            'code' => 'IT',
+            'status' => true,
+        ])->id;
     }
 
     /**

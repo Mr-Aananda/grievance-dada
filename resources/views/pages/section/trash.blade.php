@@ -2,21 +2,21 @@
 
 <x-app-layout>
     <!-- Start header widget -->
-    <div class="widget mb-3 border-top print-none">
-        <div class="widget-body d-flex">
+    <div class="card mb-3 print-none">
+        <div class="card-body py-2 d-flex align-items-center">
             <!-- Start left menu -->
             @include('pages.section.menu')
             <!-- End left menu -->
 
             <!-- Start right buttons -->
             <div class="ms-auto">
-                <button type="button" class="btn icon lg rounded" title="Print" onclick="window.print()">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Print" onclick="window.print()">
                     <i class="bi bi-printer"></i>
                 </button>
-                <a href="{{ route('section.trash') }}" class="btn icon lg rounded" title="Reload">
-                    <i class="bi bi-bootstrap-reboot"></i>
+                <a href="{{ route('section.trash') }}" class="btn btn-sm btn-outline-secondary me-1" title="Reload">
+                    <i class="bi bi-arrow-clockwise"></i>
                 </a>
-                <a href="{{ route('section.index') }}" class="btn icon lg rounded" title="Back to List">
+                <a href="{{ route('section.index') }}" class="btn btn-sm btn-outline-secondary" title="Back to List">
                     <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
@@ -31,112 +31,97 @@
         <x-print.header />
         <!-- End print header -->
 
-        <div class="widget">
-            <div class="widget-head mb-3">
-                <h5>Section Trash List</h5>
-                <p><small>{{ $sections->total() }} results found</small></p>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent border-0 d-flex align-items-center">
+                <h6 class="mb-0 fw-bold">Section Trash List</h6>
+                <span class="badge bg-secondary ms-2">{{ $sections->total() }} results found</span>
             </div>
 
-            <div class="widget-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle">
-                        <thead class="table-light">
+            <div class="card-body p-0 table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" style="width: 60px;" class="ps-3">SL</th>
+                            <th scope="col">Section Name</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Total Users</th>
+                            <th scope="col">Note</th>
+                            <th scope="col">Deleted At</th>
+                            <th scope="col" class="text-end pe-3 print-none" style="width: 140px;">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($sections as $section)
+                            @php
+                                $userCount = $section->users_count ?? 0;
+                            @endphp
                             <tr>
-                                <th style="width: 60px;">SL</th>
-                                <th>Section Name</th>
-                                <th>Code</th>
-                                <th>Department</th>
-                                <th>Total Users</th>
-                                <th>Status</th>
-                                <th>Note</th>
-                                <th>Deleted At</th>
-                                <th class="text-end print-none" style="width: 140px;">Actions</th>
+                                <td class="ps-3">{{ $sections->firstItem() + $loop->index }}</td>
+                                <td>
+                                    <span class="fw-bold">{{ $section->name ?? '--' }}</span>
+                                </td>
+                                <td>
+                                    @if ($section->code)
+                                        <span class="badge bg-secondary-subtle text-secondary">{{ $section->code }}</span>
+                                    @else
+                                        <span class="text-muted small">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($section->department)
+                                        <span class="badge bg-info-subtle text-info">{{ $section->department->name }}</span>
+                                    @else
+                                        <span class="text-muted small">No department</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($userCount > 0)
+                                        <span class="badge bg-primary-subtle text-primary">{{ $userCount }} user(s)</span>
+                                    @else
+                                        <span class="text-muted small">No users</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ $section->note ? Str::limit($section->note, 30) : '—' }}</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ $section->deleted_at->format('d M Y, h:i A') }}</small>
+                                </td>
+
+                                <td class="text-end pe-3 print-none">
+                                    <a href="{{ route('section.restore', $section->id) }}" class="btn btn-sm btn-warning text-dark" title="Restore">
+                                        <i class="bi bi-arrow-clockwise"></i> Restore
+                                    </a>
+
+                                    <form action="{{ route('section.permanentDelete', $section->id) }}"
+                                        method="POST" class="d-inline ms-1">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger text-white" title="Delete Permanently"
+                                            onclick="return confirm('Are you sure you want to PERMANENTLY delete this section? This action cannot be undone.')">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
-                        </thead>
-
-                        <tbody>
-                            @forelse($sections as $section)
-                                @php
-                                    $userCount = $section->users_count ?? 0;
-                                    $statusBadge = $section->status ? 'bg-success' : 'bg-danger';
-                                    $statusText = $section->status ? 'Active' : 'Inactive';
-                                @endphp
-                                <tr>
-                                    <th scope="row">{{ $sections->firstItem() + $loop->index }}</th>
-                                    <td>
-                                        <strong>{{ $section->name ?? '--' }}</strong>
-                                    </td>
-                                    <td>
-                                        @if ($section->code)
-                                            <span class="badge bg-secondary">{{ $section->code }}</span>
-                                        @else
-                                            <span class="text-muted small">N/A</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($section->department)
-                                            <span class="badge bg-info">{{ $section->department->name }}</span>
-                                        @else
-                                            <span class="text-muted small">No department</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($userCount > 0)
-                                            <span class="badge bg-primary">{{ $userCount }} user(s)</span>
-                                        @else
-                                            <span class="text-muted small">No users</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge {{ $statusBadge }}">{{ $statusText }}</span>
-                                    </td>
-                                    <td>{{ $section->note ? Str::limit($section->note, 30) : '--' }}</td>
-                                    <td>{{ $section->deleted_at->format('d M, Y h:i A') }}</td>
-
-                                    <td class="text-end print-none">
-                                        <a href="{{ route('section.restore', $section->id) }}"
-                                            class="btn btn-warning sm">
-                                            <i class="bi bi-arrow-clockwise"></i>
-                                        </a>
-
-                                        <form action="{{ route('section.permanentDelete', $section->id) }}"
-                                            method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn sm btn-danger" title="Delete Permanently"
-                                                onclick="return confirm('Are you sure you want to PERMANENTLY delete this section? This will also permanently remove user assignments. This action cannot be undone.')">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="9" class="text-center text-muted py-4">
-                                        <i class="bi bi-inbox"></i> No Sections Found in Trash
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                    No sections found in trash.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
+            @if($sections->hasPages())
+                <div class="card-footer bg-transparent border-0 d-flex justify-content-end">
+                    {{ $sections->links('pagination::bootstrap-5') }}
+                </div>
+            @endif
         </div>
     </div>
-
-    <!-- Start pagination -->
-    @if ($sections->hasPages())
-        <div class="widget">
-            <div class="widget-body">
-                {{ $sections->links() }}
-            </div>
-        </div>
-    @endif
-    <!-- End pagination -->
-
-    <style>
-        .badge {
-            font-size: 0.85rem;
-        }
-    </style>
 </x-app-layout>

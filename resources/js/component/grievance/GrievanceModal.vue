@@ -43,6 +43,49 @@
                                 </span>
                             </div>
 
+                            <!-- Status Timeline Progress Steps -->
+                            <div class="mb-5 text-center">
+                                <div class="d-flex justify-content-between align-items-center position-relative mx-auto" style="max-width: 500px;">
+                                    <!-- Progress Line Background -->
+                                    <div class="position-absolute top-50 start-0 end-0 translate-middle-y bg-secondary-subtle" style="height: 4px; z-index: 1;"></div>
+                                    <!-- Active Progress Line -->
+                                    <div class="position-absolute top-50 start-0 translate-middle-y bg-success" :style="{ width: getStatusProgressPercent(data.status) + '%', height: '4px', zIndex: 2, transition: 'width 0.3s ease' }"></div>
+                                    
+                                    <!-- Step: Submitted -->
+                                    <div class="position-relative" style="z-index: 3;">
+                                        <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('submitted', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
+                                            <i class="bi bi-inbox"></i>
+                                        </div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">Submitted</div>
+                                    </div>
+                                    
+                                    <!-- Step: Under Review -->
+                                    <div class="position-relative" style="z-index: 3;">
+                                        <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('under_review', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
+                                            <i class="bi bi-eye"></i>
+                                        </div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">Under Review</div>
+                                    </div>
+                                    
+                                    <!-- Step: In Resolution -->
+                                    <div class="position-relative" style="z-index: 3;">
+                                        <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('in_resolution', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
+                                            <i class="bi bi-tools"></i>
+                                        </div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">In Resolution</div>
+                                    </div>
+                                    
+                                    <!-- Step: Resolved -->
+                                    <div class="position-relative" style="z-index: 3;">
+                                        <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('resolved', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
+                                            <i class="bi bi-check-circle"></i>
+                                        </div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">Resolved</div>
+                                    </div>
+                                </div>
+                                <div style="height: 30px;"></div> <!-- Spacer for absolute labels -->
+                            </div>
+
                             <!-- Info Grid -->
                             <div class="gms-details-grid">
                                 <div>
@@ -70,12 +113,12 @@
                             <!-- Description -->
                             <div class="gms-details-section">
                                 <div class="gms-details-label">Description</div>
-                                <div class="gms-details-box">{{ data.description }}</div>
+                                <div class="gms-details-box ql-editor" v-html="data.description"></div>
                             </div>
 
                             <!-- Admin Remarks -->
                             <div v-if="data.admin_remarks" class="gms-details-section">
-                                <div class="gms-details-label">Admin Remarks</div>
+                                <div class="gms-details-label">Admin Remarks & Feedback</div>
                                 <div class="gms-remarks-box">
                                     <i class="bi bi-chat-dots-fill"></i>
                                     <p>{{ data.admin_remarks }}</p>
@@ -192,6 +235,23 @@ function getStatusClass(status) {
         resolved: 'status-resolved'
     };
     return classes[status] || 'status-default';
+}
+
+function getStatusProgressPercent(status) {
+    const percentages = {
+        submitted: 0,
+        under_review: 33,
+        in_resolution: 66,
+        resolved: 100
+    };
+    return percentages[status] ?? 0;
+}
+
+function isStepActive(step, currentStatus) {
+    const order = ['submitted', 'under_review', 'in_resolution', 'resolved'];
+    const stepIdx = order.indexOf(step);
+    const currentIdx = order.indexOf(currentStatus);
+    return stepIdx <= currentIdx;
 }
 
 function getFileIcon(mime) {

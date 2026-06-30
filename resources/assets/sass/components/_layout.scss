@@ -1,0 +1,416 @@
+@use "../helpers" as *;
+
+/* Map .widget to AdminLTE 4 / Bootstrap 5 card style using native variables */
+.widget {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: var(--bs-card-bg, #fff);
+    background-clip: border-box;
+    border: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0,0,0,.125));
+    border-radius: var(--bs-card-border-radius, 0.375rem);
+    margin-bottom: 1.5rem;
+    padding: 0 !important;
+
+    .widget-head {
+        padding: var(--bs-card-cap-padding-y, 0.5rem) var(--bs-card-cap-padding-x, 1rem) !important;
+        margin-bottom: 0;
+        color: var(--bs-card-cap-color);
+        background-color: var(--bs-card-cap-bg, rgba(0, 0, 0, 0.03));
+        border-bottom: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0, 0, 0, 0.125));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &:first-child {
+            border-top-left-radius: var(--bs-card-inner-border-radius, calc(0.375rem - 1px));
+            border-top-right-radius: var(--bs-card-inner-border-radius, calc(0.375rem - 1px));
+        }
+
+        h5, .title-sm {
+            margin-bottom: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+    }
+
+    .widget-body {
+        flex: 1 1 auto;
+        padding: var(--bs-card-spacer-y, 1rem) var(--bs-card-spacer-x, 1rem) !important;
+        color: var(--bs-card-color);
+    }
+
+    .widget-foot {
+        padding: var(--bs-card-cap-padding-y, 0.5rem) var(--bs-card-cap-padding-x, 1rem) !important;
+        color: var(--bs-card-cap-color);
+        background-color: var(--bs-card-cap-bg, rgba(0, 0, 0, 0.03));
+        border-top: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0, 0, 0, 0.125));
+
+        &:last-child {
+            border-bottom-left-radius: var(--bs-card-inner-border-radius, calc(0.375rem - 1px));
+            border-bottom-right-radius: var(--bs-card-inner-border-radius, calc(0.375rem - 1px));
+        }
+    }
+}
+
+/* Modal overlays */
+:root {
+    --modal-z-index: 9999;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: var(--modal-z-index);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-overlay {
+    z-index: 9999 !important;
+}
+
+.modal-dialog {
+    z-index: 10000 !important;
+    animation: slideUp 0.3s ease;
+}
+
+.modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.confirmation-icon {
+    font-size: 4rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+
+
+/* Force dark theme text contrast on dark asidebar */
+.app-sidebar[data-bs-theme="dark"] {
+    .brand-link, .nav-link, .nav-header, .sidebar-user-panel a, .sidebar-user-panel small {
+        color: var(--bs-body-color) !important;
+    }
+    
+
+    
+    .brand-link {
+        border-bottom: none !important;
+        text-decoration: none !important;
+    }
+
+    .nav-link {
+        i {
+            color: var(--bs-body-color) !important;
+        }
+        p {
+            color: var(--bs-body-color) !important;
+        }
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+    }
+}
+
+/* Dark mode theme variable adjustments to prevent light colors on input focus */
+[data-bs-theme="dark"] {
+    --theme-light: hsl(var(--ph), var(--ps), calc(var(--pl) - 35%)) !important;
+
+    // Override bg-white and bg-light globally in dark mode
+    .bg-white {
+        background-color: var(--bs-card-bg) !important;
+    }
+    .bg-light {
+        background-color: var(--bs-body-bg) !important;
+    }
+    
+    // Adjust texts
+    .text-dark {
+        color: var(--bs-body-color) !important;
+    }
+    
+    // In dark mode, badges with bg-light should look clean
+    .badge.bg-light {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: var(--bs-body-color) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    
+    // Rich text editor backgrounds
+    .quill-content {
+        background-color: var(--bs-body-bg) !important;
+        color: var(--bs-body-color) !important;
+    }
+
+    // Table light overrides in dark mode
+    .table-light {
+        --bs-table-bg: var(--bs-card-bg) !important;
+        --bs-table-color: var(--bs-body-color) !important;
+        --bs-table-border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+}
+
+/* ==========================================================================
+   Unified Widgets, Forms, & Inputs Styling (AdminLTE/Bootstrap-based)
+   ========================================================================== */
+.widget {
+    background-color: var(--bs-card-bg);
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+    padding: 0;
+    margin-bottom: 1rem;
+    box-shadow: var(--bs-box-shadow-sm);
+}
+
+.widget-body {
+    padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
+    
+    // Auto strip padding if the body contains a table to match .card-body.p-0
+    &:has(table) {
+        padding: 0 !important;
+        overflow-x: auto;
+    }
+    
+    // Header widgets (top bar) menu layout
+    &.d-flex {
+        padding: 0.5rem 1rem !important;
+        align-items: center;
+    }
+    
+    // Sub-menu navbar tabs inside the widget card-body
+    .navbar {
+        padding: 0 !important;
+        
+        .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+            
+            .nav-item {
+                .nav-link {
+                    padding: 0.375rem 0.75rem !important;
+                    font-size: 0.8125rem !important;
+                    font-weight: 600 !important;
+                    border-radius: 6px !important;
+                    border: 1px solid var(--bs-primary) !important;
+                    color: var(--bs-primary) !important;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.25rem;
+                    transition: all 0.15s ease-in-out;
+                    background: transparent;
+                    
+                    i {
+                        font-size: 0.9375rem;
+                        margin: 0 !important;
+                    }
+                    
+                    &.active {
+                        background-color: var(--bs-primary) !important;
+                        color: #ffffff !important;
+                    }
+                    
+                    &:hover:not(.active) {
+                        background-color: rgba(var(--bs-primary-rgb), 0.08) !important;
+                    }
+                    
+                    // Specific trash button link styles
+                    &[href*="trash"] {
+                        border-color: var(--bs-danger) !important;
+                        color: var(--bs-danger) !important;
+                        
+                        &.active {
+                            background-color: var(--bs-danger) !important;
+                            color: #ffffff !important;
+                        }
+                        &:hover:not(.active) {
+                            background-color: rgba(var(--bs-danger-rgb), 0.08) !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Override the custom legacy .btn.icon.lg.rounded icons
+    .btn.icon.lg.rounded, .btn.icon.rounded {
+        padding: 0.375rem 0.75rem !important;
+        font-size: 0.8125rem !important;
+        border-radius: 6px !important;
+        border: 1px solid var(--bs-border-color) !important;
+        background-color: transparent !important;
+        color: var(--bs-body-color) !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: auto !important;
+        height: auto !important;
+        box-shadow: none !important;
+        
+        i {
+            font-size: 0.9375rem;
+            margin: 0 !important;
+        }
+        
+        &:hover {
+            background-color: var(--bs-secondary-bg) !important;
+            border-color: var(--bs-border-color-translucent) !important;
+        }
+        
+        &[data-bs-target="#tableSearch"].collapsed {
+            // default collapsed style
+        }
+        &[data-bs-target="#tableSearch"]:not(.collapsed) {
+            background-color: var(--bs-primary-bg-subtle) !important;
+            border-color: var(--bs-primary-border-subtle) !important;
+            color: var(--bs-primary-text-emphasis) !important;
+        }
+    }
+}
+
+.widget-head {
+    border-bottom: 1px solid var(--bs-border-color);
+    padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x);
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    h5, h6 {
+        margin-bottom: 0 !important;
+        font-weight: 700 !important;
+        font-size: 0.9375rem !important;
+        color: var(--bs-body-color) !important;
+    }
+    p {
+        margin-bottom: 0 !important;
+        font-size: 0.75rem !important;
+        color: var(--bs-secondary-color) !important;
+    }
+}
+
+// Table styling unification
+.widget-body table, .card-body table {
+    margin-bottom: 0 !important;
+    width: 100%;
+    
+    thead {
+        background-color: var(--bs-tertiary-bg);
+        border-bottom: 1px solid var(--bs-border-color);
+        
+        th {
+            font-size: 0.8125rem !important;
+            font-weight: 600 !important;
+            color: var(--bs-secondary-color) !important;
+            padding: 0.75rem !important;
+        }
+    }
+    
+    tbody {
+        tr {
+            td, th {
+                padding: 0.75rem !important;
+                font-size: 0.875rem !important;
+                vertical-align: middle !important;
+            }
+        }
+    }
+}
+
+// Modern Form Inputs to look exactly like standard AdminLTE / Bootstrap 5
+.form-control,
+.form-select,
+textarea.form-control {
+    background-color: var(--bs-body-bg) !important;
+    border: 1px solid var(--bs-border-color) !important;
+    color: var(--bs-body-color) !important;
+    border-radius: 0.375rem !important;
+    font-size: 0.875rem !important;
+    padding: 0.4375rem 0.75rem !important;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+    
+    &::placeholder {
+        letter-spacing: normal !important;
+        color: var(--bs-secondary-color) !important;
+        opacity: 0.7;
+    }
+    
+    &:focus {
+        background-color: var(--bs-body-bg) !important;
+        border-color: #86b7fe !important;
+        color: var(--bs-body-color) !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+        
+        &::placeholder {
+            letter-spacing: normal !important;
+        }
+    }
+    
+    &:disabled {
+        background-color: var(--bs-secondary-bg) !important;
+        opacity: 0.65;
+    }
+}
+
+// Form Labels matching modern AdminLTE
+.form-label,
+.form-check-label,
+label.form-label {
+    color: var(--bs-body-color) !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 0.375rem !important;
+    display: inline-block;
+}
+
+// Custom Required asterisk styling
+.required::after, label.required::after {
+    content: " *" !important;
+    color: var(--bs-danger) !important;
+    font-size: 0.875rem !important;
+    font-weight: bold !important;
+    position: static !important;
+}

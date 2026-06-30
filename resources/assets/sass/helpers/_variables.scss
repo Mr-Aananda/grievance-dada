@@ -6,11 +6,11 @@
     --theme-darken: hsl(var(--ph), var(--ps), calc(var(--pl) - 5%));
     --theme-light: hsl(var(--ph), var(--ps), calc(var(--pl) + 45%));
 
-    --secondary-color: #82868b;
-    --light-color: #dee2e6;
-    --white-color: #ffffff;
-    --black-color: #000000;
-    --bg-color: #f4f5f7;
+    --secondary-color: var(--bs-secondary-color);
+    --light-color: var(--bs-border-color);
+    --white-color: var(--bs-card-bg);
+    --black-color: var(--bs-body-color);
+    --bg-color: var(--bs-body-bg);
     --success-color: #28c76f;
     --warning-color: #F7CC00;
     --danger-color: #ea5455;
@@ -25,13 +25,8 @@ $purple-color: #5014BA;
 $blue-color: #2E59D7;
 $primary-color: #3498db;
 
-.dark-mode {
-    --white-color: #283144;
-    --secondary-color: #a1b0cb;
-    --black-color: #a1b0cb;
-    --bg-color: #1c222f;
-    --light-color: #323d53;
-    .navbar-brand {
+[data-bs-theme="dark"] {
+    .navbar-brand, .brand-link {
         img {
             filter: brightness(0) invert(1);
         }

@@ -64,28 +64,26 @@
     "src": "resources/assets/images/users/user2.png"
   },
   "resources/js/app-legacy.js": {
-    "file": "assets/app-legacy-DHQgVWGR.js",
+    "file": "assets/app-legacy-CyfBRlFy.js",
     "name": "app",
     "src": "resources/js/app-legacy.js",
     "isEntry": true,
     "assets": [
       "assets/bootstrap-icons-mSm7cUeB.woff2",
-      "assets/bootstrap-icons-BeopsB42.woff",
-      "assets/mail_bg-C9tpt1HY.png"
+      "assets/bootstrap-icons-BeopsB42.woff"
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-BTEC-QGt.js",
+    "file": "assets/app-Bhj5qUWL.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-RO5oR10R.css"
+      "assets/app-DsZR1kdh.css"
     ],
     "assets": [
       "assets/bootstrap-icons-mSm7cUeB.woff2",
-      "assets/bootstrap-icons-BeopsB42.woff",
-      "assets/mail_bg-C9tpt1HY.png"
+      "assets/bootstrap-icons-BeopsB42.woff"
     ]
   },
   "vite/legacy-polyfills-legacy": {

@@ -7,62 +7,39 @@
             </div>
         </Teleport>
 
-        <!-- Topbar -->
-        <header class="gms-topbar">
-            <div class="gms-topbar-brand">
-                <div class="gms-brand-icon">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <div>
-                    <div class="gms-brand-name">DADA (Dhaka) Ltd.</div>
-                    <div class="gms-brand-sub">Grievance Management System</div>
-                </div>
-            </div>
-            <div class="gms-topbar-badge">
-                <i class="bi bi-person-badge me-1"></i> GMS Portal
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <div class="gms-page-wrap">
-            <!-- Page Header -->
-            <div class="gms-page-header">
-                <div class="gms-page-title">Grievance Redressal Portal</div>
-                <div class="gms-page-sub">
-                    <i class="bi bi-chat-square-dots me-1"></i>
-                    অভিযোগ প্রতিকার মাধ্যম — Submit and track your grievances
-                </div>
-            </div>
-
-            <!-- Success Alert -->
-            <Transition name="gms-fade">
-                <div v-if="newTicket" class="gms-alert-success">
-                    <i class="bi bi-check-circle-fill gms-alert-icon"></i>
-                    <div class="gms-alert-content">
-                        <strong>Grievance submitted successfully!</strong>
-                        <div class="gms-alert-text">Save your ticket number to track your grievance status.</div>
-                        <div class="gms-ticket-display" @click="copyTicket(newTicket)">
-                            {{ newTicket }}
-                            <i class="bi bi-copy"></i>
-                        </div>
+        <!-- Success Alert -->
+        <Transition name="gms-fade">
+            <div v-if="newTicket" class="gms-success-alert mb-4">
+                <div class="gms-success-icon"><i class="bi bi-check-circle-fill"></i></div>
+                <div class="flex-grow-1">
+                    <div class="gms-success-title">Grievance Submitted Successfully!</div>
+                    <div class="gms-success-sub">Your ticket number is shown below. Click to copy.</div>
+                    <div class="gms-ticket-chip" @click="copyTicket(newTicket)" title="Click to copy">
+                        <i class="bi bi-ticket-perforated me-2"></i>{{ newTicket }}<i class="bi bi-copy ms-2 opacity-75"></i>
                     </div>
-                    <button class="gms-close-btn" @click="newTicket = null" aria-label="Dismiss">✕</button>
                 </div>
-            </Transition>
+                <button class="gms-success-close" @click="newTicket = null"><i class="bi bi-x-lg"></i></button>
+            </div>
+        </Transition>
 
-            <!-- Main Grid -->
-            <div class="gms-main-grid">
-                <!-- Left: Submit Form -->
+        <!-- Main Grid -->
+        <div class="row g-4">
+            <!-- Left: Submit Form -->
+            <div class="col-12 col-lg-5 col-xl-4 d-flex flex-column">
                 <GrievanceForm
+                    class="flex-grow-1"
                     :categories="categories"
                     :departments="departments"
                     :store-url="storeUrl"
                     :is-submitting="isSubmitting"
                     @submit="handleSubmit"
                 />
+            </div>
 
-                <!-- Right: List & Stats -->
+            <!-- Right: Tracker -->
+            <div class="col-12 col-lg-7 col-xl-8 d-flex flex-column">
                 <GrievanceList
+                    class="flex-grow-1"
                     :grievances="grievances"
                     :status-counts="statusCounts"
                     :total-records="totalRecords"
@@ -90,7 +67,6 @@
             @copy-ticket="copyTicket"
             @open-lightbox="openLightbox"
         />
-
         <Lightbox
             :open="lightbox.open"
             :index="lightbox.index"
@@ -105,40 +81,41 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import GrievanceForm from './GrievanceForm.vue';
-import GrievanceList from './GrievanceList.vue';
-import GrievanceModal from './GrievanceModal.vue';
-import Lightbox from './Lightbox.vue';
+import GrievanceForm   from './GrievanceForm.vue';
+import GrievanceList   from './GrievanceList.vue';
+import GrievanceModal  from './GrievanceModal.vue';
+import Lightbox        from './Lightbox.vue';
 
 const props = defineProps({
-    categories: { type: Array, default: () => [] },
-    departments: { type: Array, default: () => [] },
-    storeUrl: { type: String, required: true },
-    listUrl: { type: String, required: true },
-    showUrl: { type: String, required: true },
+    categories:    { type: Array,  default: () => [] },
+    departments:   { type: Array,  default: () => [] },
+    storeUrl:      { type: String, required: true },
+    listUrl:       { type: String, required: true },
+    showUrl:       { type: String, required: true },
+    logoUrl:       { type: String, default: '' },
     initialCounts: { type: Object, default: () => ({}) },
     initialTicket: { type: String, default: null },
 });
 
 const statDefs = {
-    submitted: { label: 'Submitted', bn: 'জমা দেওয়া', icon: 'bi-inbox', cls: 's-primary' },
-    under_review: { label: 'Under Review', bn: 'পর্যালোচনায়', icon: 'bi-eye', cls: 's-amber' },
-    in_resolution: { label: 'In Resolution', bn: 'সমাধানের পথে', icon: 'bi-tools', cls: 's-danger' },
-    resolved: { label: 'Resolved', bn: 'সমাধান করা', icon: 'bi-check-circle', cls: 's-success' },
+    submitted:     { label: 'New Submitted',  icon: 'bi-inbox-fill'        },
+    under_review:  { label: 'Under Review',   icon: 'bi-eye-fill'          },
+    in_resolution: { label: 'In Resolution',  icon: 'bi-tools'             },
+    resolved:      { label: 'Resolved',       icon: 'bi-check-circle-fill' },
 };
 
-const newTicket = ref(props.initialTicket);
+const newTicket    = ref(props.initialTicket);
 const isSubmitting = ref(false);
-const search = ref('');
+const search       = ref('');
 const filterStatus = ref('');
-const grievances = ref([]);
+const grievances   = ref([]);
 const statusCounts = ref(Object.assign({}, props.initialCounts));
 const totalRecords = ref(0);
 const tableLoading = ref(false);
-const pagination = ref({ current_page: 1, last_page: 1 });
-const toast = reactive({ show: false, message: '' });
-const modal = reactive({ open: false, loading: false, error: false, data: null });
-const lightbox = reactive({ open: false, index: 0 });
+const pagination   = ref({ current_page: 1, last_page: 1 });
+const toast        = reactive({ show: false, message: '' });
+const modal        = reactive({ open: false, loading: false, error: false, data: null });
+const lightbox     = reactive({ open: false, index: 0 });
 
 const mediaImages = computed(() => {
     if (!modal.data?.media) return [];
@@ -147,8 +124,7 @@ const mediaImages = computed(() => {
 
 let toastTimer = null;
 function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
+    toast.message = msg; toast.show = true;
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { toast.show = false; }, 2500);
 }
@@ -156,8 +132,25 @@ function showToast(msg) {
 async function copyTicket(ticket) {
     if (!ticket) return;
     try {
-        await navigator.clipboard.writeText(ticket);
-        showToast('✓ Ticket number copied!');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(ticket);
+            showToast('✓ Ticket number copied!');
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = ticket;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            if (successful) {
+                showToast('✓ Ticket number copied!');
+            } else {
+                showToast('Copy failed — please copy manually');
+            }
+        }
     } catch {
         showToast('Copy failed — please copy manually');
     }
@@ -169,111 +162,52 @@ async function handleSubmit(formData, files) {
         const fd = new FormData();
         fd.append('category_id', formData.category_id);
         if (formData.department_id) fd.append('department_id', formData.department_id);
-        if (formData.employee_id) fd.append('employee_id', formData.employee_id);
+        if (formData.employee_id)   fd.append('employee_id',   formData.employee_id);
         fd.append('description', formData.description);
         files.forEach((f, i) => fd.append(`files[${i}]`, f));
-
         const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         if (csrf) fd.append('_token', csrf);
-
-        const res = await axios.post(props.storeUrl, fd, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
-
-        if (res.data.success) {
-            newTicket.value = res.data.ticket_number;
-            await fetchGrievances(1);
-            return { success: true, ticket: res.data.ticket_number };
-        }
+        const res = await axios.post(props.storeUrl, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        if (res.data.success) { newTicket.value = res.data.ticket_number; await fetchGrievances(1); return { success: true, ticket: res.data.ticket_number }; }
         return { success: false, message: res.data.message };
     } catch (err) {
-        if (err.response?.status === 422) {
-            return { success: false, errors: err.response.data.errors };
-        }
+        if (err.response?.status === 422) return { success: false, errors: err.response.data.errors };
         return { success: false, message: err.message };
-    } finally {
-        isSubmitting.value = false;
-    }
+    } finally { isSubmitting.value = false; }
 }
 
 async function fetchGrievances(page = 1) {
     tableLoading.value = true;
     try {
         const params = new URLSearchParams({ page });
-        if (search.value) params.set('search', search.value);
+        if (search.value)       params.set('search', search.value);
         if (filterStatus.value) params.set('status', filterStatus.value);
-
-        const res = await axios.get(`${props.listUrl}?${params}`, {
-            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-        });
-
-        grievances.value = res.data.data || [];
-        pagination.value = {
-            current_page: res.data.current_page ?? 1,
-            last_page: res.data.last_page ?? 1,
-        };
+        const res = await axios.get(`${props.listUrl}?${params}`, { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
+        grievances.value  = res.data.data || [];
+        pagination.value  = { current_page: res.data.current_page ?? 1, last_page: res.data.last_page ?? 1 };
         totalRecords.value = res.data.total ?? 0;
         if (res.data.status_counts) statusCounts.value = res.data.status_counts;
-    } catch (e) {
-        console.error('Fetch error:', e);
-    } finally {
-        tableLoading.value = false;
-    }
+    } catch (e) { console.error('Fetch error:', e); }
+    finally { tableLoading.value = false; }
 }
 
-function handleFilterChange(status) {
-    filterStatus.value = status;
-    fetchGrievances(1);
-}
-
-function handleSearchChange(value) {
-    search.value = value;
-    fetchGrievances(1);
-}
-
-function clearFilters() {
-    search.value = '';
-    filterStatus.value = '';
-    fetchGrievances(1);
-}
+function handleFilterChange(s)  { filterStatus.value = s;  fetchGrievances(1); }
+function handleSearchChange(v)  { search.value = v;        fetchGrievances(1); }
+function clearFilters()         { search.value = ''; filterStatus.value = ''; fetchGrievances(1); }
 
 async function showDetail(id) {
-    modal.open = true;
-    modal.loading = true;
-    modal.error = false;
-    modal.data = null;
-
+    modal.open = true; modal.loading = true; modal.error = false; modal.data = null;
     try {
         const url = props.showUrl.replace('{id}', id).replace(':id', id);
-        const res = await axios.get(url, {
-            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-        });
+        const res = await axios.get(url, { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
         modal.data = res.data;
-    } catch {
-        modal.error = true;
-    } finally {
-        modal.loading = false;
-    }
+    } catch { modal.error = true; } finally { modal.loading = false; }
 }
 
-function openLightbox({ index }) {
-    lightbox.index = index;
-    lightbox.open = true;
-}
-
-function lightboxPrev() {
-    if (!mediaImages.value.length) return;
-    lightbox.index = (lightbox.index - 1 + mediaImages.value.length) % mediaImages.value.length;
-}
-
-function lightboxNext() {
-    if (!mediaImages.value.length) return;
-    lightbox.index = (lightbox.index + 1) % mediaImages.value.length;
-}
-
-function lightboxGoTo(index) {
-    lightbox.index = index;
-}
+function openLightbox({ index }) { lightbox.index = index; lightbox.open = true; }
+function lightboxPrev()  { if (!mediaImages.value.length) return; lightbox.index = (lightbox.index - 1 + mediaImages.value.length) % mediaImages.value.length; }
+function lightboxNext()  { if (!mediaImages.value.length) return; lightbox.index = (lightbox.index + 1) % mediaImages.value.length; }
+function lightboxGoTo(i) { lightbox.index = i; }
 
 onMounted(() => fetchGrievances(1));
 </script>

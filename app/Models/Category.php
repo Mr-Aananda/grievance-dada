@@ -20,4 +20,9 @@ class Category extends Model
     protected $casts = [
         'status' => 'boolean',
     ];
+
+    public function grievances()
+    {
+        return $this->hasMany(Grievance::class);
+    }
 }

@@ -1,26 +1,27 @@
 @section('title', 'Departments')
 
 <x-app-layout>
-    <!-- Start main-bar -->
     <!-- Start header widget -->
-    <div class="widget mb-3">
-        <div class="widget-body d-flex">
+    <div class="card mb-3">
+        <div class="card-body py-2 d-flex align-items-center">
             <!-- Start menu -->
             @include('pages.department.menu')
             <!-- End menu -->
+            
             <!-- Start right buttons -->
             <div class="ms-auto">
-                <button type="button" class="btn icon lg rounded collapsed" title="Search" data-bs-toggle="collapse"
-                    data-bs-target="#tableSearch" aria-controls="tableSearch" aria-expanded="false">
-                    <i class="bi bi-search"></i>
+                <button type="button" class="btn btn-sm btn-outline-secondary collapsed me-1" title="Search Filters"
+                        data-bs-toggle="collapse" data-bs-target="#tableSearch" aria-controls="tableSearch"
+                        aria-expanded="false">
+                    <i class="bi bi-funnel-fill"></i> Filter
                 </button>
-                <button type="button" class="btn icon lg rounded" title="Print" onclick="printable('print-widget')">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Print" onclick="printable('print-widget')">
                     <i class="bi bi-printer"></i>
                 </button>
-                <button type="button" class="btn icon lg rounded" title="Reloar" onclick="location.reload()">
-                    <i class="bi bi-bootstrap-reboot"></i>
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Reload" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise"></i>
                 </button>
-                <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
@@ -28,19 +29,18 @@
         </div>
 
         <!-- Start Filter Fill -->
-        <div class="widget-body collapse {{ request()->search == '1' ? 'show' : '' }}" id="tableSearch">
+        <div class="card-footer collapse {{ request()->search == '1' ? 'show' : '' }} bg-light border-0" id="tableSearch">
             <form action="{{ route('department.index') }}" method="get">
-                <div class="row py-3 g-3">
+                <div class="row py-2 g-3 align-items-end">
                     <input hidden type="text" name="search" value="1">
                     <div class="col-md-4">
-                        <label for="department" class="form-label">Department name</label>
-                        <input class="form-control" list="departmentList" name="name" id="department"
-                            placeholder="Type a department name" value="{{ request()->name }}">
+                        <label for="department" class="form-label small fw-semibold">Department name</label>
+                        <input class="form-control form-control-sm" name="name" id="department"
+                               placeholder="Type a department name" value="{{ request()->name }}">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">&nbsp;</label>
-                        <button class="btn btn-success d-block w-100" type="submit"><i class="bi bi-search"></i>
-                            Search
+                        <button class="btn btn-sm btn-primary w-100" type="submit">
+                            <i class="bi bi-search me-1"></i> Search
                         </button>
                     </div>
                 </div>
@@ -55,83 +55,74 @@
         <x-print.header />
         <!-- End print header -->
 
-        <!-- Start body widget -->
-        <div class="widget">
-            <div class="widget-head mb-3">
-                <h5>All Departments</h5>
-                <p><small>{{ count($departments) }} results found </small></p>
+        <!-- Start table card -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent border-0 d-flex align-items-center">
+                <h6 class="mb-0 fw-bold">All Departments</h6>
+                <span class="badge bg-secondary ms-2">{{ $departments->total() }} results found</span>
             </div>
-            <div class="widget-body">
-                <table class="table table-bordered">
-                    <thead>
+            <div class="card-body p-0 table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <th scope="col">SL</th>
+                            <th scope="col" style="width: 60px;" class="ps-3">SL</th>
                             <th scope="col">Department Name</th>
-                            {{-- <th scope="col">Code</th> --}}
                             <th scope="col">Sections</th>
-                            {{-- <th scope="col">Total Users</th> --}}
                             <th scope="col">Note</th>
-                            <th scope="col" class="text-end print-none">Actions</th>
+                            <th scope="col" class="text-end pe-3 print-none">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($departments as $department)
                             <tr>
-                                <th scope="row">{{ $departments->firstItem() + $loop->index }}</th>
+                                <td class="ps-3">{{ $departments->firstItem() + $loop->index }}</td>
                                 <td>
-                                    {{ $department->name }}
+                                    <span class="fw-bold">{{ $department->name }}</span>
                                 </td>
-                                {{-- <td>
-                                <span class="badge bg-secondary">{{ $department->code ?? 'N/A' }}</span>
-                            </td> --}}
                                 <td>
                                     @if ($department->sections->count() > 0)
                                         <div class="section-list">
                                             @foreach ($department->sections->take(3) as $section)
-                                                <span class="badge bg-primary me-1 mb-1">
+                                                <span class="badge bg-primary-subtle text-primary me-1 mb-1">
                                                     {{ $section->name }}
                                                 </span>
                                             @endforeach
                                             @if ($department->sections->count() > 3)
-                                                <span class="badge bg-light text-dark">
+                                                <span class="badge bg-secondary-subtle text-secondary">
                                                     +{{ $department->sections->count() - 3 }} more
                                                 </span>
                                             @endif
-                                            <div class="text-muted small mt-1">
-                                                Total: {{ $department->sections->count() }} sections
-                                            </div>
                                         </div>
                                     @else
-                                        <span class="text-muted">No sections</span>
+                                        <span class="text-muted small">No sections</span>
                                     @endif
                                 </td>
-                                {{-- <td class="text-center">
-                                <span class="badge bg-primary">{{ $department->users_count ?? 0 }}</span>
-                            </td> --}}
-                                <td>{{ $department->note ?? '--' }}</td>
-                                <td class="text-end print-none">
+                                <td>
+                                    <small class="text-muted">{{ $department->note ?? '—' }}</small>
+                                </td>
+                                <td class="text-end pe-3 print-none">
                                     @can('department.show')
-                                        <a href="{{ route('department.show', $department->id) }}" class="btn sm btn-info"
-                                            title="View Details">
-                                            <i class="bi bi-eye"></i>
+                                        <a href="{{ route('department.show', $department->id) }}" class="btn btn-sm btn-info text-white"
+                                           title="View Details">
+                                            <i class="bi bi-eye-fill"></i>
                                         </a>
                                     @endcan
 
                                     @can('department.edit')
                                         <a href="{{ route('department.edit', $department->id) }}"
-                                            class="btn sm btn-success" title="Edit">
+                                           class="btn btn-sm btn-success text-white" title="Edit">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                     @endcan
 
                                     @can('department.destroy')
                                         <form action="{{ route('department.destroy', $department->id) }}" method="POST"
-                                            class="d-inline" onsubmit="return confirm('Are you sure want to delete?')">
+                                              class="d-inline ms-1" onsubmit="return confirm('Are you sure want to delete?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" title="Delete"
-                                                {{ ($department->sections_count ?? 0) > 0 || ($department->sections_count ?? 0) > 0 ? 'disabled' : '' }}
-                                                class="btn sm btn-danger">
+                                                    {{ ($department->sections_count ?? 0) > 0 ? 'disabled' : '' }}
+                                                    class="btn btn-sm btn-danger text-white">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
@@ -140,25 +131,28 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">No Data found</td>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                    No departments found.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+            @if($departments->hasPages())
+                <div class="card-footer bg-transparent border-0 d-flex justify-content-end">
+                    {{ $departments->links('pagination::bootstrap-5') }}
+                </div>
+            @endif
         </div>
-        <!-- End body widget -->
+        <!-- End table card -->
     </div>
-
-    <!-- Start pagination -->
-    <x-pagination :items="$departments" />
-    <!-- End pagination -->
 
     <style>
         .section-list {
             max-width: 300px;
         }
-
         .section-list .badge {
             font-size: 0.75rem;
         }

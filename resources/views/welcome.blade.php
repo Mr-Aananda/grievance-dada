@@ -1,4 +1,4 @@
-@section('title', 'QMS - Quality Management System')
+@section('title', 'GMS - Grievance Management System')
 
 <x-guest-layout>
     <!-- Centered Section -->
@@ -16,7 +16,7 @@
             <div class="card-header py-4 bg-white border-0"
                  style="border-top-left-radius: 24px; border-top-right-radius: 24px;">
                 <img src="{{ Vite::asset('resources/assets/images/logo/dada_bg.png') }}"
-                     alt="QMS Logo"
+                     alt="GMS Logo"
                      class="img-fluid"
                      style="max-height: 90px;">
             </div>
@@ -24,10 +24,10 @@
             <!-- Welcome Section -->
             <div class="card-body px-4 py-5" style="background-color: #f9fafc;">
                 <h1 class="fw-bold mb-3" style="font-size: 2rem; color: #1b4332;">
-                    Quality Management System
+                    Grievance Management System
                 </h1>
                 <p class="text-muted mb-4" style="font-size: 1.1rem;">
-                    Streamline inspection, monitor quality data, and ensure garment excellence — all in one smart platform.
+                    Submit complaints, suggestions, or feedback and track their resolution status — all in one platform.
                 </p>
 
                 <!-- Button Group -->
@@ -44,7 +44,7 @@
             <!-- Footer Section -->
             <div class="card-footer py-3 small"
                  style="border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; background-color: #eef3f7;">
-                &copy; {{ date('Y') }} Dada (Dhaka) Ltd. — Quality Management System <br>
+                &copy; {{ date('Y') }} Dada (Dhaka) Ltd. — Grievance Management System <br>
                 <span class="text-secondary">Developed by the IT Department.</span>
             </div>
         </div>

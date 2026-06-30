@@ -65,7 +65,7 @@ class GrievanceController extends Controller
         $categories = Category::where('status', true)->orderBy('name')->get();
         $departments = Department::where('status', true)->orderBy('name')->get();
 
-        return view('worker-dashboard', compact(
+        return view('grievance-portal', compact(
             'categories',
             'departments',
             'statusCounts',
@@ -223,5 +223,85 @@ class GrievanceController extends Controller
         if (str_starts_with($mime, 'video/'))
             return 'grievance_videos';
         return 'grievance_documents';
+    }
+
+    /**
+     * Admin list view for tracking grievances.
+     */
+    public function adminIndex(Request $request): View
+    {
+        $query = Grievance::with(['category', 'department']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('employee_id', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        $grievances = $query->latest()->paginate(30)->withQueryString();
+        $categories = Category::where('status', true)->orderBy('name')->get();
+        $departments = Department::where('status', true)->orderBy('name')->get();
+
+        return view('pages.grievance.index', compact('grievances', 'categories', 'departments'));
+    }
+
+    /**
+     * Admin detail view.
+     */
+    public function adminShow($id): View
+    {
+        $grievance = Grievance::with(['category', 'department'])->findOrFail($id);
+        return view('pages.grievance.show', compact('grievance'));
+    }
+
+    /**
+     * Admin status update.
+     */
+    public function adminUpdateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:submitted,under_review,in_resolution,resolved',
+            'admin_remarks' => 'nullable|string|max:5000',
+        ]);
+
+        $grievance = Grievance::findOrFail($id);
+        $grievance->status = $request->status;
+        $grievance->admin_remarks = $request->admin_remarks;
+
+        if ($request->status === 'resolved') {
+            $grievance->resolved_at = now();
+        } else {
+            $grievance->resolved_at = null;
+        }
+
+        $grievance->save();
+
+        return redirect()->route('admin.grievance.show', $id)->with('success', 'Grievance status updated successfully.');
+    }
+
+    /**
+     * Admin delete.
+     */
+    public function adminDestroy($id)
+    {
+        $grievance = Grievance::findOrFail($id);
+        $grievance->delete();
+
+        return redirect()->route('admin.grievance.index')->with('success', 'Grievance deleted successfully.');
     }
 }

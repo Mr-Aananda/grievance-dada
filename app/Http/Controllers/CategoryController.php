@@ -55,8 +55,8 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
-        if ($category->complains()->count() > 0) {
-            return redirect()->back()->withErrors(['error' => 'Cannot delete category. There are complains assigned to this category.']);
+        if ($category->grievances()->count() > 0) {
+            return redirect()->back()->withErrors(['error' => 'Cannot delete category. There are grievances assigned to this category.']);
         }
         $category->delete();
         return redirect()->route('category.index')->withSuccess('Category deleted successfully.');

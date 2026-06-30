@@ -1,37 +1,34 @@
 <template>
-    <div class="gms-card gms-form-card">
-        <div class="gms-card-header gms-form-header">
-            <div>
-                <div class="gms-card-title">
-                    <i class="bi bi-pencil-square"></i> Submit New Grievance
-                </div>
-                <div class="gms-card-sub">অভিযোগ জমা দিন</div>
-            </div>
+    <div class="card card-primary card-outline shadow-sm border-0 h-100">
+        <div class="card-header bg-transparent border-bottom py-3">
+            <h5 class="card-title mb-0 fw-bold text-primary">
+                <i class="bi bi-pencil-square me-2"></i> Submit New Grievance
+            </h5>
         </div>
 
-        <div class="gms-card-body">
+        <div class="card-body p-4">
             <form @submit.prevent="handleSubmit">
                 <!-- Category -->
-                <div class="gms-form-group">
-                    <label class="gms-label">
-                        <i class="bi bi-tag"></i> Category <span class="gms-required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-tag text-primary me-1"></i> Category <span class="text-danger">*</span>
                     </label>
-                    <select v-model="form.category_id" class="gms-input" :class="{ 'is-invalid': errors.category_id }">
+                    <select v-model="form.category_id" class="form-select" :class="{ 'is-invalid': errors.category_id }">
                         <option value="">— Select a category —</option>
                         <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                             {{ cat.name }}
                         </option>
                     </select>
-                    <div v-if="errors.category_id" class="gms-invalid-feedback">{{ errors.category_id[0] }}</div>
+                    <div v-if="errors.category_id" class="invalid-feedback">{{ errors.category_id[0] }}</div>
                 </div>
 
                 <!-- Department -->
-                <div class="gms-form-group">
-                    <label class="gms-label">
-                        <i class="bi bi-building"></i> Department
-                        <span class="gms-optional">Optional</span>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-building text-primary me-1"></i> Department
+                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">Optional</span>
                     </label>
-                    <select v-model="form.department_id" class="gms-input">
+                    <select v-model="form.department_id" class="form-select">
                         <option value="">— Select a department —</option>
                         <option v-for="dept in departments" :key="dept.id" :value="dept.id">
                             {{ dept.name }}
@@ -40,37 +37,41 @@
                 </div>
 
                 <!-- Employee ID -->
-                <div class="gms-form-group">
-                    <label class="gms-label">
-                        <i class="bi bi-person-badge"></i> Employee ID
-                        <span class="gms-optional">Optional</span>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-person-badge text-primary me-1"></i> Employee ID
+                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">Optional</span>
                     </label>
-                    <input type="text" v-model="form.employee_id" class="gms-input" placeholder="e.g., EMP-1023" />
+                    <input type="text" v-model="form.employee_id" class="form-control" placeholder="e.g., EMP-1023" />
                 </div>
 
-                <div class="gms-divider"></div>
-
                 <!-- Description -->
-                <div class="gms-form-group">
-                    <label class="gms-label">
-                        <i class="bi bi-chat-text"></i> Issue Description <span class="gms-required">*</span>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-chat-text text-primary me-1"></i> Issue Description <span class="text-danger">*</span>
                     </label>
-                    <textarea v-model="form.description" class="gms-input gms-textarea" rows="6" maxlength="5000"
-                        placeholder="Describe your grievance clearly and in detail…"
-                        :class="{ 'is-invalid': errors.description }"></textarea>
-                    <div class="gms-character-count">
-                        <span :class="{ 'text-danger': form.description.length > 4800 }">
-                            {{ form.description.length }} / 5000
-                        </span>
+                    <div :class="{ 'is-invalid-quill': errors.description }">
+                        <QuillEditor
+                            v-model:content="form.description"
+                            contentType="html"
+                            theme="snow"
+                            placeholder="Describe your grievance clearly and in detail…"
+                            :toolbar="[
+                                ['bold', 'italic', 'underline'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                ['clean']
+                            ]"
+                            style="height: 180px;"
+                        />
                     </div>
-                    <div v-if="errors.description" class="gms-invalid-feedback">{{ errors.description[0] }}</div>
+                    <div v-if="errors.description" class="invalid-feedback d-block">{{ errors.description[0] }}</div>
                 </div>
 
                 <!-- Attachments -->
-                <div class="gms-form-group">
-                    <label class="gms-label">
-                        <i class="bi bi-paperclip"></i> Attachments
-                        <span class="gms-optional">Optional</span>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-paperclip text-primary me-1"></i> Attachments
+                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">Optional</span>
                     </label>
 
                     <div v-if="!files.length" class="gms-dropzone" @click="openFilePicker"
@@ -103,14 +104,14 @@
                     <input ref="fileInput" type="file" multiple style="display: none" @change="onFileChange" />
                 </div>
 
-                <button type="submit" class="gms-btn-submit" :disabled="!isFormValid || isSubmitting">
+                <button type="submit" class="gms-btn-submit py-3 fw-bold" :disabled="!isFormValid || isSubmitting">
                     <span v-if="isSubmitting" class="gms-spinner"></span>
                     <i v-else class="bi bi-send-fill"></i>
                     {{ isSubmitting ? 'Submitting...' : 'Submit Grievance' }}
                 </button>
 
-                <div class="gms-secure-badge">
-                    <i class="bi bi-lock-fill"></i> Secure & Confidential
+                <div class="gms-secure-badge text-center text-muted mt-3 small">
+                    <i class="bi bi-lock-fill me-1 text-success"></i> Secure & Confidential
                 </div>
             </form>
         </div>
@@ -119,6 +120,8 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
+import { QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 const props = defineProps({
     categories: { type: Array, default: () => [] },
@@ -140,7 +143,11 @@ const errors = ref({});
 const isDragging = ref(false);
 const fileInput = ref(null);
 
-const isFormValid = computed(() => form.category_id && form.description.trim());
+const isFormValid = computed(() => {
+    if (!form.category_id || !form.description) return false;
+    const text = form.description.replace(/<[^>]*>/g, '').trim();
+    return text.length > 0;
+});
 
 function formatFileSize(bytes) {
     if (!bytes) return '';
@@ -168,6 +175,7 @@ function onFileChange(e) {
     addFiles([...e.target.files]);
 }
 
+// Drag and drop support
 function onDrop(e) {
     e.preventDefault();
     isDragging.value = false;
@@ -196,7 +204,9 @@ async function handleSubmit() {
     if (!form.category_id) {
         errors.value.category_id = ['Category is required'];
     }
-    if (!form.description.trim()) {
+    
+    const textDesc = form.description ? form.description.replace(/<[^>]*>/g, '').trim() : '';
+    if (!textDesc) {
         errors.value.description = ['Issue description is required'];
     }
 
