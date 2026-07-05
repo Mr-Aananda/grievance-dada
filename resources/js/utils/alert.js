@@ -348,6 +348,89 @@ if (typeof document !== "undefined") {
     addStyles();
 }
 
+/**
+ * Grievance submission success modal
+ * Shows ticket number with copy button and a Done & Refresh action.
+ * @param {string} ticketNumber
+ */
+export const showGrievanceSuccess = async (ticketNumber) => {
+    const copyToClipboard = async (text) => {
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;opacity:0';
+            document.body.appendChild(ta);
+            ta.focus(); ta.select();
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            return ok;
+        } catch { return false; }
+    };
+
+    const result = await Swal.fire({
+        html: `
+            <div class="gms-swal-body">
+                <div class="gms-swal-check">
+                    <svg viewBox="0 0 52 52"><circle class="gms-swal-circle" cx="26" cy="26" r="25" fill="none"/><path class="gms-swal-tick" fill="none" d="M14 27l8 8 16-16"/></svg>
+                </div>
+                <h2 class="gms-swal-title">Submitted Successfully!</h2>
+                <p class="gms-swal-desc">Your grievance has been recorded. Use your ticket number to track the status.</p>
+                <div class="gms-swal-ticket-wrap">
+                    <span class="gms-swal-ticket-label">Ticket Number</span>
+                    <div class="gms-swal-ticket-row">
+                        <span class="gms-swal-ticket-num" id="swal-ticket-num">${ticketNumber}</span>
+                        <button type="button" class="gms-swal-copy-btn" id="swal-copy-btn">
+                            <i class="bi bi-copy" id="swal-copy-icon"></i>
+                            <span id="swal-copy-text">Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `,
+        showConfirmButton: true,
+        confirmButtonText: '<i class="bi bi-arrow-clockwise me-1"></i> Done &amp; Refresh',
+        showCancelButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showClass: {
+            popup: 'gms-swal-fade-in'
+        },
+        hideClass: {
+            popup: 'gms-swal-fade-out'
+        },
+        customClass: {
+            popup:         'gms-swal-popup',
+            confirmButton: 'gms-swal-done-btn',
+        },
+        didOpen: () => {
+            const copyBtn  = document.getElementById('swal-copy-btn');
+            const copyIcon = document.getElementById('swal-copy-icon');
+            const copyText = document.getElementById('swal-copy-text');
+            copyBtn?.addEventListener('click', async () => {
+                const ok = await copyToClipboard(ticketNumber);
+                if (ok) {
+                    copyIcon.className = 'bi bi-check2';
+                    copyText.textContent = 'Copied!';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyIcon.className = 'bi bi-copy';
+                        copyText.textContent = 'Copy';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                }
+            });
+        },
+    });
+
+    if (result.isConfirmed) {
+        window.location.reload();
+    }
+};
+
 // Export default object
 export default {
     success: showSuccessAlert,
@@ -359,4 +442,5 @@ export default {
     loading: showLoadingAlert,
     close: closeAlert,
     toast: showToast,
+    grievanceSuccess: showGrievanceSuccess,
 };

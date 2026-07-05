@@ -1,8 +1,10 @@
 @section('title', 'GMS — Grievance Management System')
 
 <x-portal-layout>
-    <div id="vueRoot" class="container-fluid py-0">
+    <div class="py-0">
         <grievance
+            v-model:active-tab="activeTab"
+            v-model:total-records="totalRecords"
             :categories='@json($categories)'
             :departments='@json($departments)'
             store-url="{{ route('grievance.store') }}"

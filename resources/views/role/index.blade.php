@@ -1,136 +1,113 @@
 @section('title', 'Roles')
 
 <x-app-layout>
-    <!-- Start main-bar  -->
-            <!-- Start header widget -->
-            <div class="widget mb-3">
-                <div class="widget-body d-flex">
-                    <!-- Start left menu -->
-                    @include('role.menu')
-                    <!-- End left menu -->
-                    <!-- Start right buttons -->
-                    <div class="ms-auto">
-                        <button type="button" class="btn icon lg rounded" title="Print"
-                            onclick="printable('print-widget')">
-                            <i class="bi bi-printer"></i>
-                        </button>
-                        <button type="button" class="btn icon lg rounded" title="Reloar" onclick="location.reload()">
-                            <i class="bi bi-bootstrap-reboot"></i>
-                        </button>
-                        <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
-                            <i class="bi bi-arrow-left"></i>
-                        </button>
-                    </div>
-                    <!-- End right buttons -->
-
-                </div>
-                <!-- Start Filter Fill -->
-                <div class="widget-body collapse" id="tableSearch">
-                    <form action="#">
-                        <div class="row py-3 gx-3">
-
-                            <div class="col-md-5">
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                    <select class="form-select">
-                                        <option selected="">Select user roles</option>
-                                        <option value="1">All</option>
-                                        <option value="2">Admin</option>
-                                        <option value="3">Operator</option>
-                                        <option value="4">Salesman</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-md-1">
-                                <button class="btn btn-success d-block w-100" type="submit"> <i
-                                        class="bi bi-search"></i>
-                                    Search</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <!-- End Filter Fill -->
+    <!-- Start header widget -->
+    <div class="widget mb-3 border-top print-none">
+        <div class="widget-body d-flex">
+            <!-- Start menu -->
+            @include('role.menu')
+            <!-- End menu -->
+            
+            <!-- Start right buttons -->
+            <div class="ms-auto">
+                <button type="button" class="btn icon lg rounded" title="Print" onclick="printable('print-widget')">
+                    <i class="bi bi-printer"></i>
+                </button>
+                <button type="button" class="btn icon lg rounded" title="Reload" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+                <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
             </div>
-            <!-- End header widget -->
+            <!-- End right buttons -->
+        </div>
+    </div>
+    <!-- End header widget -->
 
-            <div id="print-widget">
+    <div id="print-widget">
+        <!-- Start print header -->
+        <x-print.header/>
+        <!-- End print header -->
 
-                <!-- Start print header -->
-                <x-print.header/>
-                <!-- End print header -->
-
-                <!-- Start body widget -->
-                <div class="widget">
-                    <div class="widget-head mb-3">
-                        <h5>All roles</h5>
-                        <p><small>{{ count($roles) }} results found </small></p>
-                    </div>
-                    <div class="widget-body">
-                        <table class="table table-bordered">
-                            <thead>
+        <!-- Start table card -->
+        <div class="widget">
+            <div class="widget-head mb-3">
+                <h5>All Roles</h5>
+                <p><small>Total Result found {{ $roles->total() }} </small></p>
+            </div>
+            <div class="widget-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;" class="ps-3">SL</th>
+                                <th>Name</th>
+                                <th class="text-center">Total Assigned</th>
+                                <th class="text-end pe-3 print-none">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($roles as $role)
                                 <tr>
-                                    <th scope="col">sl</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col" class="text-center">Total Assigned</th>
-                                    <th scope="col" class="text-end print-none">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($roles as $role)
-                                    <tr>
-                                        <th scope="row">{{ $roles->firstItem() + $loop->index }}</th>
-                                        <td>
-                                            {{ $role->name }}
-                                            @if ($role->is_permanent)
-                                                <span data-bs-toggle="tooltip" title="This role is permanent">
-                                                    <i class="bi bi-shield-lock"></i>
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">{{ $role->users_count }}</td>
-                                        <td class="text-end print-none">
-                                            @can('role.show')
-                                                <a href="{{ route('role.show', $role->id) }}" class="btn sm btn-info">
-                                                    <i class="bi bi-eye-fill"></i>
+                                    <td class="ps-3">{{ $roles->firstItem() + $loop->index }}</td>
+                                    <td>
+                                        <span class="fw-bold">{{ $role->name }}</span>
+                                        @if ($role->is_permanent)
+                                            <span data-bs-toggle="tooltip" title="This role is permanent" class="ms-1 text-muted">
+                                                <i class="bi bi-shield-lock"></i>
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{ $role->users_count }}</td>
+                                    <td class="text-end pe-3 print-none">
+                                        @can('role.show')
+                                            <a href="{{ route('role.show', $role->id) }}"
+                                               class="btn btn-info sm" title="View Details">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                        @endcan
+                                        @can('role.edit')
+                                            @unless(\Database\Seeders\RoleSeeder::ADMINISTRATOR_RULE_NAME == $role->name)
+                                                <a href="{{ route('role.edit', $role->id) }}"
+                                                   class="btn btn-success sm" title="Edit">
+                                                    <i class="bi bi-pencil-square"></i>
                                                 </a>
-                                            @endcan
-                                            @can('role.edit')
-                                                @unless(\Database\Seeders\RoleSeeder::ADMINISTRATOR_RULE_NAME == $role->name)
-                                                    <a href="{{ route('role.edit', $role->id) }}" class="btn sm btn-success">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </a>
-                                                @endunless
-                                            @endcan
+                                            @endunless
+                                        @endcan
 
-                                            @can('role.destroy')
-                                                @unless($role->is_permanent)
-                                                    <form action="{{ route('role.destroy', $role->id) }}" method="POST"
-                                                        class="d-inline"
-                                                        onsubmit="return confirm('Are you sure want to delete?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" {{ $role->users_count> 0 ? 'disabled' : '' }} class="btn sm btn-danger">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                @endunless
-                                            @endcan
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="10" class="text-center">No roles found</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                                        @can('role.destroy')
+                                            @unless($role->is_permanent)
+                                                <form action="{{ route('role.destroy', $role->id) }}" method="POST"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Are you sure want to delete?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" {{ $role->users_count > 0 ? 'disabled' : '' }} title="Delete" class="btn btn-danger sm">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endunless
+                                        @endcan
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No roles found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-                <!-- End body widget -->
             </div>
-        <!-- Start pagination -->
-            <x-pagination :items="$roles" />
-        <!-- End pagination -->
-    <!-- End main-bar ================================================ -->
+        </div>
+        <!-- End table card -->
+    </div>
+
+    <!-- Start pagination -->
+    <x-pagination :items="$roles" />
+    <!-- End pagination -->
 </x-app-layout>

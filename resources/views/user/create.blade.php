@@ -1,6 +1,5 @@
 @section('title', 'Create user')
 <x-app-layout>
-    <!-- Start main-bar -->
     <!-- Start header widget -->
     <div class="widget mb-3">
         <div class="widget-body d-flex">
@@ -17,6 +16,7 @@
         </div>
     </div>
     <!-- End header widget -->
+
     <!-- Start body widget -->
     <div class="row">
         <div class="col-md-12">
@@ -98,57 +98,50 @@
                         <div class="row g-3 mb-2">
                             <div class="col-md-12">
                                 <x-form.label name="User Roles" required />
-
-                                <!-- Compact Bootstrap checkboxes for roles -->
-                                <div class="border rounded p-2 @error('role') border-danger @enderror"
-                                     style="max-height: 150px; overflow-y: auto; background-color: #f8f9fa;">
-                                    <div class="d-flex flex-wrap" style="gap: 4px 8px;">
-                                        @foreach ($roles as $role)
-                                            <div class="form-check form-check-inline mb-1" style="margin-right: 4px;">
-                                                <input class="form-check-input role-checkbox" type="checkbox"
-                                                    name="role[]"
-                                                    value="{{ $role->name }}"
-                                                    id="role_{{ $loop->index }}"
-                                                    {{ is_array(old('role')) && in_array($role->name, old('role')) ? 'checked' : '' }}>
-                                                <label class="form-check-label small fw-bold" for="role_{{ $loop->index }}">
-                                                    {{ $role->name }}
-                                                </label>
+                                <div class="card p-3 bg-light-subtle border @error('roles') border-danger @enderror" style="border-radius: 8px;">
+                                    <div class="row">
+                                        @forelse($roles as $role)
+                                            <div class="col-md-3 col-sm-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="roles[]" 
+                                                        value="{{ $role->name }}" id="role-{{ $role->id }}"
+                                                        @checked(is_array(old('roles')) && in_array($role->name, old('roles')))>
+                                                    <label class="form-check-label" for="role-{{ $role->id }}">
+                                                        {{ $role->name }}
+                                                    </label>
+                                                </div>
                                             </div>
-                                        @endforeach
+                                        @empty
+                                            <div class="col-12 text-muted small">No roles available</div>
+                                        @endforelse
                                     </div>
                                 </div>
-                                <small class="text-muted d-block mt-1">Select one or more roles</small>
-
-                                @error('role')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                        <strong class="text-danger">{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                                @error('role.*')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                        <strong class="text-danger">{{ $message }}</strong>
+                                @error('roles')
+                                    <span class="text-danger small d-block mt-1">
+                                        <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="row g-3 mb-2">
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <x-form.label name="Password" required />
-                                <x-form.input type="password" name="password" placeholder="********" required />
+                                <x-form.label name="Password" for="password" required />
+                                <x-form.input type="password" id="password" name="password" placeholder="Enter secure password" required />
                             </div>
                             <div class="col-md-6">
-                                <x-form.label name="Confirm Password" required />
-                                <x-form.input type="password" name="password_confirmation" placeholder="********"
-                                    required />
+                                <x-form.label name="Confirm Password" for="password_confirmation" required />
+                                <x-form.input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm your password" required />
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-12 text-end">
-                                <x-form.reset />
-                                <x-form.save name="Add User" />
-                            </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success sm px-4" type="submit">
+                                <i class="bi bi-check-circle me-1"></i> Save
+                            </button>
+                            <a href="{{ route('user.index') }}" class="btn btn-secondary sm px-4">
+                                <i class="bi bi-x-circle me-1"></i> Cancel
+                            </a>
                         </div>
                     </form>
                 </div>

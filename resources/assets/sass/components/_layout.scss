@@ -214,6 +214,8 @@
     &.d-flex {
         padding: 0.5rem 1rem !important;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
     
     // Sub-menu navbar tabs inside the widget card-body

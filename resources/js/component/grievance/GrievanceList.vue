@@ -1,40 +1,46 @@
 <template>
     <div class="d-flex flex-column h-100">
 
-        <!-- Gradient Stat Cards (matching admin dashboard) -->
-        <div class="row g-3 mb-4">
-            <div v-for="(stat, key) in statDefs" :key="key" class="col-12 col-sm-6 col-xxl-3">
-                <div
-                    :class="['gms-stat-card', `gms-stat-${key}`, filterStatus === key && 'gms-stat-active']"
-                    @click="$emit('filter-change', filterStatus === key ? '' : key)"
-                    role="button" tabindex="0"
-                    @keyup.enter="$emit('filter-change', filterStatus === key ? '' : key)"
-                >
-                    <div class="gms-stat-inner">
-                        <h3 class="gms-stat-count">{{ statusCounts[key] ?? 0 }}</h3>
-                        <p class="gms-stat-label">{{ stat.label }}</p>
-                    </div>
-                    <i :class="['gms-stat-bg-icon bi', stat.icon]"></i>
-                    <div class="gms-stat-footer-link">
-                        {{ filterStatus === key ? 'Clear filter' : 'Filter by this' }}
-                        <i :class="['bi ms-1', filterStatus === key ? 'bi-x-circle' : 'bi-arrow-right-short']"></i>
+        <!-- Responsive Modern Stat Cards -->
+        <div class="gms-stats-container mb-4">
+            <div class="row g-3">
+                <div v-for="(stat, key) in statDefs" :key="key" class="col-6 col-xxl-3">
+                    <div
+                        :class="['gms-stat-card', `gms-stat-${key}`, filterStatus === key && 'gms-stat-active']"
+                        @click="$emit('filter-change', filterStatus === key ? '' : key)"
+                        role="button" tabindex="0"
+                        @keyup.enter="$emit('filter-change', filterStatus === key ? '' : key)"
+                    >
+                        <div class="gms-stat-card-body">
+                            <div class="gms-stat-header-row">
+                                <span class="gms-stat-card-icon"><i :class="['bi', stat.icon]"></i></span>
+                                <h3 class="gms-stat-count mb-0">{{ statusCounts[key] ?? 0 }}</h3>
+                            </div>
+                            <p class="gms-stat-label mb-0">{{ stat.label }}</p>
+                        </div>
+                        <div class="gms-stat-footer">
+                            <span class="gms-stat-footer-text">
+                                {{ filterStatus === key ? 'Active Filter' : 'Filter by this' }}
+                            </span>
+                            <i :class="['bi', filterStatus === key ? 'bi-x-circle-fill text-danger' : 'bi-chevron-right']"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Grievance Tracker Table -->
+        <!-- Grievance Tracker Card -->
         <div class="card border-0 shadow-sm flex-grow-1 gms-tracker-card">
             <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-2">
                     <span class="gms-tracker-icon"><i class="bi bi-ticket-perforated-fill"></i></span>
                     <div>
-                        <h6 class="mb-0 fw-bold">Grievance Tracker</h6>
+                        <h6 class="mb-0 fw-bold text-dark">Grievance Tracker</h6>
                         <small class="text-muted">{{ totalRecords }} total records</small>
                     </div>
                 </div>
-                <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <div class="gms-search-wrap">
+                <div class="d-flex align-items-center gap-2 flex-wrap w-100-mobile">
+                    <div class="gms-search-wrap flex-grow-1-mobile">
                         <i class="bi bi-search gms-search-icon"></i>
                         <input
                             type="text"
@@ -51,7 +57,8 @@
             </div>
 
             <div class="card-body p-0 table-responsive d-flex flex-column flex-grow-1">
-                <table v-if="tableLoading || grievances.length" class="table table-hover align-middle mb-0">
+                <!-- Desktop Table View -->
+                <table v-if="(tableLoading || grievances.length) && !tableLoading" class="table table-hover align-middle mb-0 d-none d-md-table">
                     <thead class="gms-thead">
                         <tr>
                             <th class="ps-4">Ticket #</th>
@@ -63,32 +70,70 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="tableLoading">
-                            <td colspan="6" class="py-4">
-                                <div v-for="n in 5" :key="n" class="gms-skeleton my-2 mx-4"></div>
+                        <tr v-for="g in grievances" :key="g.id"
+                            @click="$emit('view-detail', g.id)" class="gms-table-row">
+                            <td class="ps-4">
+                                <span class="gms-ticket-number">{{ g.ticket_number }}</span>
+                            </td>
+                            <td><span class="gms-category-badge">{{ g.category?.name || '—' }}</span></td>
+                            <td class="text-muted small">{{ g.department?.name || '—' }}</td>
+                            <td>
+                                <span :class="['gms-status-pill', `status-${g.status}`]">{{ g.status_label }}</span>
+                            </td>
+                            <td><small class="text-muted">{{ formatDate(g.created_at) }}</small></td>
+                            <td class="pe-4 text-end">
+                                <i class="bi bi-chevron-right text-muted gms-row-arrow"></i>
                             </td>
                         </tr>
-                        <template v-else>
-                            <tr v-for="g in grievances" :key="g.id"
-                                @click="$emit('view-detail', g.id)" class="gms-table-row">
-                                <td class="ps-4">
-                                    <span class="gms-ticket-number">{{ g.ticket_number }}</span>
-                                </td>
-                                <td><span class="gms-category-badge">{{ g.category?.name || '—' }}</span></td>
-                                <td class="text-muted small">{{ g.department?.name || '—' }}</td>
-                                <td>
-                                    <span :class="['gms-status-pill', `status-${g.status}`]">{{ g.status_label }}</span>
-                                </td>
-                                <td><small class="text-muted">{{ formatDate(g.created_at) }}</small></td>
-                                <td class="pe-4 text-end">
-                                    <i class="bi bi-chevron-right text-muted gms-row-arrow"></i>
-                                </td>
-                            </tr>
-                        </template>
                     </tbody>
                 </table>
 
-                <div v-else class="gms-empty-state flex-grow-1">
+                <!-- Mobile Card List View -->
+                <div v-if="!tableLoading && grievances.length" class="gms-mobile-list d-md-none">
+                    <div v-for="g in grievances" :key="g.id"
+                        @click="$emit('view-detail', g.id)" class="gms-mobile-card p-3 mb-2 mx-3 mt-2 shadow-sm">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="gms-mobile-ticket-num">{{ g.ticket_number }}</span>
+                            <span :class="['gms-status-pill m-0', `status-${g.status}`]">{{ g.status_label }}</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <div class="gms-mobile-meta-label">Category</div>
+                                <div class="gms-mobile-meta-val text-truncate">{{ g.category?.name || '—' }}</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="gms-mobile-meta-label">Department</div>
+                                <div class="gms-mobile-meta-val text-truncate">{{ g.department?.name || '—' }}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between pt-2 border-top border-light">
+                            <span class="gms-mobile-date"><i class="bi bi-calendar3 me-1"></i>{{ formatDate(g.created_at) }}</span>
+                            <span class="gms-mobile-action">View <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skeleton Loaders -->
+                <div v-if="tableLoading" class="w-100">
+                    <!-- Desktop Skeleton -->
+                    <div class="d-none d-md-block p-4">
+                        <div v-for="n in 5" :key="'desk-sk-'+n" class="gms-skeleton my-2 mx-4"></div>
+                    </div>
+                    <!-- Mobile Skeleton -->
+                    <div class="d-md-none p-3">
+                        <div v-for="n in 3" :key="'mob-sk-'+n" class="gms-mobile-skeleton-card mb-3 p-3 shadow-sm">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="gms-skeleton-line w-50"></div>
+                                <div class="gms-skeleton-line w-25"></div>
+                            </div>
+                            <div class="gms-skeleton-line w-75 mb-2"></div>
+                            <div class="gms-skeleton-line w-60"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div v-else-if="!grievances.length" class="gms-empty-state flex-grow-1">
                     <div class="gms-empty-icon"><i class="bi bi-inbox-fill"></i></div>
                     <h5 class="gms-empty-title">No grievances found</h5>
                     <p class="gms-empty-sub">Submit a new grievance using the form,<br>or adjust your search filters.</p>

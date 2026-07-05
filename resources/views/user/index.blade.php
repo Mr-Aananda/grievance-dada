@@ -10,15 +10,15 @@
             <!-- Start right button -->
             <div class="ms-auto">
                 <button type="button" class="btn icon lg rounded" title="Search" data-bs-toggle="collapse"
-                    data-bs-target="#tableSearch" aria-controls="tableSearch" aria-expanded="true">
+                    data-bs-target="#tableSearch" aria-controls="tableSearch" aria-expanded="false">
                     <i class="bi bi-search"></i>
                 </button>
                 <button type="button" class="btn icon lg rounded" title="Print" onclick="printable('print-widget')">
                     <i class="bi bi-printer"></i>
                 </button>
 
-                <button type="button" class="btn icon lg rounded" title="Reloar" onclick="location.reload()">
-                    <i class="bi bi-bootstrap-reboot"></i>
+                <button type="button" class="btn icon lg rounded" title="Reload" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise"></i>
                 </button>
                 <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
@@ -30,26 +30,24 @@
         <!-- Start Search body -->
         <div class="widget-body collapse {{ request()->search == '1' ? 'show' : '' }}" id="tableSearch">
             <form action="{{ route('user.index') }}">
+                <input hidden name="search" value="1">
                 <div class="row py-3 g-3">
-
-                    <input hidden name="search" value="1">
                     <div class="col-md-3">
                         <label for="account" class="form-label">User name</label>
                         <input type="text" class="form-control" value="{{ request()->name }}"
                             placeholder="Search users" id="account" list="search-user" name="name">
-
                     </div>
 
                     <div class="col-md-3">
-                        <label for="phone" class="form-label"> Phone</label>
+                        <label for="phone" class="form-label">Phone</label>
                         <input type="text" class="form-control" value="{{ request()->phone }}"
                             placeholder="Ex: 01xxx" name="phone" id="phone">
                     </div>
 
                     <div class="col-md-3">
-                        <label for="Status" class="form-label"> Status</label>
+                        <label for="Status" class="form-label">Status</label>
                         <select class="form-select" name="status" id="Status">
-                            <option selected disabled value>--Choose one--</option>
+                            <option selected disabled value="">--Choose one--</option>
                             <option value="1" {{ request()->status == '1' ? 'selected' : '' }}>Active User</option>
                             <option value="0" {{ request()->status == '0' ? 'selected' : '' }}>Inactive User</option>
                         </select>
@@ -61,13 +59,6 @@
                             Search
                         </button>
                     </div>
-                    <div class="col-md-1">
-                        <label class="form-label">&nbsp;</label>
-                        <button class="btn btn-danger d-block w-100" type="reset">
-                            <i class="bi bi-stars"></i>
-                            Reset
-                        </button>
-                    </div>
                 </div>
             </form>
         </div>
@@ -75,8 +66,6 @@
     </div>
     <!-- End header widget -->
 
-
-    <!-- Start body widget -->
     <div id="print-widget">
         <!-- Start print header -->
         <x-print.header />
@@ -85,32 +74,28 @@
         <div class="widget">
             <div class="widget-head mb-3">
                 <h5>All Users</h5>
-                <p><small>Total Result found {{ count($users) }} </small></p>
+                <p><small>Total Result found {{ $users->total() }} </small></p>
             </div>
             <div class="widget-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th style="width: 70px;">
-                                    SL
-                                </th>
+                                <th style="width: 70px;" class="ps-3">SL</th>
                                 <th>Name</th>
                                 <th>Employee ID</th>
                                 <th>Department</th>
                                 <th>Section</th>
                                 <th class="text-center">Status</th>
-                                <th class="text-end print-none">Actions</th>
+                                <th class="text-end pe-3 print-none">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($users as $user)
                                 <tr>
-                                    <th>
-                                        {{ $users->firstItem() + $loop->index }}
-                                    </th>
+                                    <td class="ps-3">{{ $users->firstItem() + $loop->index }}</td>
                                     <td>{{ $user->name }}</td>
-                                    <td>{{ $user->emp_id  }}</td>
+                                    <td>{{ $user->emp_id }}</td>
                                     <td>{{ $user->department?->name }}</td>
                                     <td>{{ $user->section?->name ?? 'N/A' }}</td>
                                     <td class="text-center">
@@ -118,7 +103,7 @@
                                             {{ $user->status == '1' ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
-                                    <td class="text-end print-none">
+                                    <td class="text-end pe-3 print-none">
                                         @can('user.show')
                                             <a href="{{ route('user.show', $user->id) }}" class="btn btn-info sm">
                                                 <i class="bi bi-eye-fill"></i>
@@ -130,7 +115,6 @@
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                         @endcan
-
 
                                         @can('user.destroy')
                                             @php
@@ -144,12 +128,12 @@
                                                     @method('DELETE')
                                                     <button type="button" class="btn btn-danger sm"
                                                         onclick="if(confirm('Are you sure want to delete?')) { document.getElementById('sm-delete-{{ $user->id }}').submit() } return false">
-                                                        <i class="bi bi-trash-fill"></i>
+                                                        <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
                                             @else
                                                 <button class="btn btn-danger sm" disabled>
-                                                    <i class="bi bi-trash-fill"></i>
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             @endif
                                         @endcan
@@ -173,5 +157,4 @@
     <!-- Start pagination -->
     <x-pagination :items="$users" />
     <!-- End pagination -->
-    <!-- End Body widget -->
 </x-app-layout>

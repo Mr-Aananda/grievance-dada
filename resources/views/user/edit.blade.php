@@ -1,21 +1,22 @@
 @section('title', 'Edit User')
 <x-app-layout>
-    <!-- Start main-bar -->
     <!-- Start header widget -->
     <div class="widget mb-3">
         <div class="widget-body d-flex">
             <!-- Start left menu -->
             @include('user.menu')
             <!-- End left menu -->
-
+            <!-- Start right buttons -->
             <div class="ms-auto">
                 <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
+            <!-- End right buttons -->
         </div>
     </div>
     <!-- End header widget -->
+
     <!-- Start body widget -->
     <div class="widget mb-5">
         <div class="widget-head mb-3">
@@ -66,14 +67,6 @@
                         <select id="section_id" class="form-select @error('section_id') is-invalid @enderror"
                             name="section_id" required>
                             <option value="">Select Section</option>
-                            @if(old('department_id', $user->department_id))
-                                @foreach ($sections as $section)
-                                    <option value="{{ $section->id }}"
-                                        {{ old('section_id', $user->section_id) == $section->id ? 'selected' : '' }}>
-                                        {{ $section->name }}
-                                    </option>
-                                @endforeach
-                            @endif
                         </select>
                         @error('section_id')
                             <span class="invalid-feedback" role="alert">
@@ -171,72 +164,74 @@
                     </div>
                 </div>
 
-                <div class="text-end">
-                    <x-form.reset />
-                    <x-form.save name="Update User" />
+                <div class="d-flex gap-2">
+                    <button class="btn btn-success sm px-4" type="submit">
+                        <i class="bi bi-check-circle me-1"></i> Save
+                    </button>
+                    <a href="{{ route('user.index') }}" class="btn btn-secondary sm px-4">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
     <!-- End body widget -->
 
-<script>
-    function loadSections(departmentId) {
-        const sectionSelect = document.getElementById('section_id');
+    <script>
+        function loadSections(departmentId) {
+            const sectionSelect = document.getElementById('section_id');
 
-        if (!departmentId) {
-            sectionSelect.innerHTML = '<option value="">Select Department First</option>';
-            return;
-        }
+            if (!departmentId) {
+                sectionSelect.innerHTML = '<option value="">Select Department First</option>';
+                return;
+            }
 
-        // Show loading
-        sectionSelect.innerHTML = '<option value="">Loading sections...</option>';
-        sectionSelect.disabled = true;
+            // Show loading
+            sectionSelect.innerHTML = '<option value="">Loading sections...</option>';
+            sectionSelect.disabled = true;
 
-        // Get current section ID
-        const currentSectionId = {{ $user->section_id ?? 0 }};
+            // Use the correct URL
+            const url = `{{ url('admin/user/sections') }}/${departmentId}`;
 
-        // Use the correct URL
-        const url = `{{ url('admin/user/sections') }}/${departmentId}`;
+            // Fetch sections
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(sections => {
+                    sectionSelect.disabled = false;
 
-        // Fetch sections
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(sections => {
-                sectionSelect.disabled = false;
+                    if (!sections || sections.length === 0) {
+                        sectionSelect.innerHTML = '<option value="">No sections found</option>';
+                        return;
+                    }
 
-                if (!sections || sections.length === 0) {
-                    sectionSelect.innerHTML = '<option value="">No sections found</option>';
-                    return;
-                }
+                    let options = '<option value="">Select Section</option>';
+                    sections.forEach(section => {
+                        // Check if this is the current section
+                        const currentSectionId = {{ $user->section_id ?? 0 }};
+                        const selected = (currentSectionId && section.id == currentSectionId) ? 'selected' : '';
+                        options += `<option value="${section.id}" ${selected}>${section.name}</option>`;
+                    });
 
-                let options = '<option value="">Select Section</option>';
-                sections.forEach(section => {
-                    // Check if this is the current section
-                    const selected = (currentSectionId && section.id == currentSectionId) ? 'selected' : '';
-                    options += `<option value="${section.id}" ${selected}>${section.name}</option>`;
+                    sectionSelect.innerHTML = options;
+                })
+                .catch(error => {
+                    console.error('Error loading sections:', error);
+                    sectionSelect.innerHTML = '<option value="">Error loading sections</option>';
+                    sectionSelect.disabled = false;
                 });
-
-                sectionSelect.innerHTML = options;
-            })
-            .catch(error => {
-                console.error('Error loading sections:', error);
-                sectionSelect.innerHTML = '<option value="">Error loading sections</option>';
-                sectionSelect.disabled = false;
-            });
-    }
-
-    // Load sections on page load if department is selected
-    document.addEventListener('DOMContentLoaded', function() {
-        const departmentId = document.getElementById('department_id').value;
-        if (departmentId) {
-            loadSections(departmentId);
         }
-    });
-</script>
+
+        // Load sections on page load if department is selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const departmentId = document.getElementById('department_id').value;
+            if (departmentId) {
+                loadSections(departmentId);
+            }
+        });
+    </script>
 </x-app-layout>

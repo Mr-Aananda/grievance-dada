@@ -52,6 +52,7 @@
                     </label>
                     <div :class="{ 'is-invalid-quill': errors.description }">
                         <QuillEditor
+                            ref="quillRef"
                             v-model:content="form.description"
                             contentType="html"
                             theme="snow"
@@ -84,15 +85,24 @@
                         <div class="gms-dropzone-hint">Images · Videos · PDF · Word · Excel — max 100 MB each</div>
                     </div>
 
-                    <div v-else class="gms-file-list">
-                        <div v-for="(file, index) in files" :key="index" class="gms-file-item">
-                            <i :class="['bi', getFileIcon(file), 'gms-file-icon']"></i>
-                            <div class="gms-file-info">
-                                <div class="gms-file-name">{{ file.name }}</div>
-                                <div class="gms-file-size">{{ formatFileSize(file.size) }}</div>
+                    <div v-else class="gms-file-grid">
+                        <div v-for="(file, index) in files" :key="index" class="gms-file-card-item">
+                            <!-- Image Thumbnail Preview -->
+                            <div v-if="file.type.startsWith('image/')" class="gms-file-preview-wrap">
+                                <img :src="file.preview" class="gms-file-image-preview" alt="Preview" />
                             </div>
-                            <button type="button" class="gms-file-remove" @click="removeFile(index)" aria-label="Remove file">
-                                <i class="bi bi-x-lg"></i>
+                            <!-- General Doc Icon -->
+                            <div v-else class="gms-file-doc-icon-wrap">
+                                <i :class="['bi', getFileIcon(file), 'gms-file-doc-icon']"></i>
+                            </div>
+                            <!-- Card Info Details -->
+                            <div class="gms-file-card-details">
+                                <span class="gms-file-card-name" :title="file.name">{{ file.name }}</span>
+                                <span class="gms-file-card-size">{{ formatFileSize(file.size) }}</span>
+                            </div>
+                            <!-- Card Remove Button -->
+                            <button type="button" class="gms-file-card-remove" @click="removeFile(index)" aria-label="Remove file">
+                                <i class="bi bi-x"></i>
                             </button>
                         </div>
                     </div>
@@ -119,9 +129,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, nextTick } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { showConfirmationAlert, showWarningAlert } from '../../utils/alert.js';
 
 const props = defineProps({
     categories: { type: Array, default: () => [] },
@@ -142,6 +153,7 @@ const files = ref([]);
 const errors = ref({});
 const isDragging = ref(false);
 const fileInput = ref(null);
+const quillRef  = ref(null);
 
 const isFormValid = computed(() => {
     if (!form.category_id || !form.description) return false;
@@ -185,16 +197,31 @@ function onDrop(e) {
 function addFiles(newFiles) {
     for (const file of newFiles) {
         if (file.size > 100 * 1024 * 1024) {
-            alert(`"${file.name}" exceeds 100 MB limit.`);
+            showWarningAlert(`"${file.name}" exceeds the 100 MB limit.`, 'File Too Large', {
+                confirmButtonText: 'OK',
+                customClass: { confirmButton: 'gms-swal-done-btn' },
+                toast: false,
+                position: 'center',
+                timer: undefined,
+                timerProgressBar: false
+            });
             continue;
         }
         if (!files.value.some(f => f.name === file.name && f.size === file.size)) {
+            // Generate local preview URL for image files
+            if (file.type.startsWith('image/')) {
+                file.preview = URL.createObjectURL(file);
+            }
             files.value.push(file);
         }
     }
 }
 
 function removeFile(index) {
+    const file = files.value[index];
+    if (file && file.preview) {
+        URL.revokeObjectURL(file.preview);
+    }
     files.value.splice(index, 1);
 }
 
@@ -204,7 +231,7 @@ async function handleSubmit() {
     if (!form.category_id) {
         errors.value.category_id = ['Category is required'];
     }
-    
+
     const textDesc = form.description ? form.description.replace(/<[^>]*>/g, '').trim() : '';
     if (!textDesc) {
         errors.value.description = ['Issue description is required'];
@@ -212,17 +239,70 @@ async function handleSubmit() {
 
     if (Object.keys(errors.value).length) return;
 
-    const result = await emit('submit', { ...form }, files.value);
+    // Confirmation dialog before submitting using showConfirmationAlert
+    const isConfirmed = await showConfirmationAlert(
+        'Are you sure you want to submit this grievance? Once submitted, it cannot be edited.',
+        'Submit Grievance?',
+        '<i class="bi bi-check2 me-1"></i> Submit',
+        '<i class="bi bi-x-lg me-1"></i> Cancel',
+        {
+            html: `
+                <div class="gms-swal-confirm-body">
+                    <div class="gms-swal-confirm-icon">
+                        <i class="bi bi-send-fill"></i>
+                    </div>
+                    <h2 class="gms-swal-title">Submit Grievance?</h2>
+                    <p class="gms-swal-desc">Are you sure you want to submit this grievance? Once submitted, it cannot be edited.</p>
+                </div>
+            `,
+            title: '', // Empty because we defined it in HTML block
+            text: '',  // Empty because we defined it in HTML block
+            showClass: {
+                popup: 'gms-swal-fade-in'
+            },
+            hideClass: {
+                popup: 'gms-swal-fade-out'
+            },
+            customClass: {
+                popup:         'gms-swal-popup',
+                confirmButton: 'gms-swal-done-btn',
+                cancelButton:  'gms-swal-cancel-btn',
+                actions:       'gms-swal-confirm-actions',
+            },
+        }
+    );
 
-    if (result?.success) {
-        form.category_id = '';
-        form.department_id = '';
-        form.employee_id = '';
-        form.description = '';
-        files.value = [];
-        errors.value = {};
-    } else if (result?.errors) {
-        errors.value = result.errors;
-    }
+    if (!isConfirmed) return;
+
+    emit('submit', { ...form }, files.value);
 }
+
+function reset() {
+    // Revoke all created Object URLs to prevent leaks
+    files.value.forEach(file => {
+        if (file.preview) {
+            URL.revokeObjectURL(file.preview);
+        }
+    });
+    form.category_id  = '';
+    form.department_id = '';
+    form.employee_id  = '';
+    form.description  = '';
+    files.value       = [];
+    errors.value      = {};
+    // Reset Quill editor content
+    nextTick(() => {
+        if (quillRef.value?.setHTML) {
+            quillRef.value.setHTML('');
+        } else if (quillRef.value?.getQuill) {
+            quillRef.value.getQuill().setText('');
+        }
+    });
+}
+
+function setErrors(errs) {
+    errors.value = errs;
+}
+
+defineExpose({ reset, setErrors });
 </script>

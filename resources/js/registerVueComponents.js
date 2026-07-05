@@ -4,7 +4,14 @@ import Multiselect from "vue-multiselect";
 import Grievance from "./component/grievance/Grievance.vue";
 
 
-const vueApp = createApp({});
+const vueApp = createApp({
+    data() {
+        return {
+            activeTab: 'submit',
+            totalRecords: 0
+        };
+    }
+});
 const pinia = createPinia();
 
 // Vue-Multiselect
