@@ -1,5 +1,16 @@
 <template>
     <div class="gms-scope gms-fade-in-up">
+        <!-- Full Page Loading Overlay -->
+        <Transition name="gms-fade">
+            <div v-if="isSubmitting" class="gms-submit-loading-overlay">
+                <div class="gms-submit-loading-card">
+                    <div class="gms-spinner-large"></div>
+                    <h5 class="gms-submit-loading-title">প্রক্রিয়াকরণ করা হচ্ছে...</h5>
+                    <p class="gms-submit-loading-text">আপনার অভিযোগটি সাবমিট হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন।</p>
+                    <span class="gms-submit-loading-subtext">Processing... Please do not close or refresh this page.</span>
+                </div>
+            </div>
+        </Transition>
 
         <!-- Centered Dynamic Workspace Container -->
         <div :class="['gms-workspace-container mx-auto', activeTab === 'submit' ? 'view-submit' : 'view-track']">
