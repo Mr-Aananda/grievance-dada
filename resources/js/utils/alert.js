@@ -392,7 +392,7 @@ export const showGrievanceSuccess = async (ticketNumber) => {
             </div>
         `,
         showConfirmButton: true,
-        confirmButtonText: '<i class="bi bi-arrow-clockwise me-1"></i> Done &amp; Refresh',
+        confirmButtonText: '<i class="bi bi-check-circle-fill me-1"></i> Done',
         showCancelButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
@@ -425,10 +425,6 @@ export const showGrievanceSuccess = async (ticketNumber) => {
             });
         },
     });
-
-    if (result.isConfirmed) {
-        window.location.reload();
-    }
 };
 
 // Export default object

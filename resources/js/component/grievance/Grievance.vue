@@ -236,7 +236,9 @@ async function handleSubmit(formData, files) {
         const res = await axios.post(props.storeUrl, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
         if (res.data.success) {
             formRef.value?.reset();
-            await fetchGrievances(1);
+            isSubmitting.value = false;
+            fetchGrievances(1);
+            activeTab.value = 'track';
             showGrievanceSuccess(res.data.ticket_number);
         }
         return { success: res.data.success, message: res.data.message };
