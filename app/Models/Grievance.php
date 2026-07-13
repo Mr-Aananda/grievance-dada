@@ -93,11 +93,11 @@ class Grievance extends Model implements HasMedia
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'submitted' => 'Submitted',
-            'under_review' => 'Under Review',
-            'in_resolution' => 'In Resolution',
-            'resolved' => 'Resolved',
-            default => ucfirst($this->status),
+            'submitted' => __('Submitted'),
+            'under_review' => __('Under Review'),
+            'in_resolution' => __('In Resolution'),
+            'resolved' => __('Resolved'),
+            default => __(ucfirst($this->status)),
         };
     }
 

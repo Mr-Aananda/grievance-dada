@@ -1,4 +1,4 @@
-@section('title', 'GMS - Grievance Management System')
+@section('title', __('Grievance Management System'))
 
 <x-guest-layout>
     <!-- Centered Section -->
@@ -24,19 +24,19 @@
             <!-- Welcome Section -->
             <div class="card-body px-4 py-5" style="background-color: #f9fafc;">
                 <h1 class="fw-bold mb-3" style="font-size: 2rem; color: #1b4332;">
-                    Grievance Management System
+                    {{ __('Grievance Management System') }}
                 </h1>
                 <p class="text-muted mb-4" style="font-size: 1.1rem;">
-                    Submit complaints, suggestions, or feedback and track their resolution status — all in one platform.
+                    {{ __('Submit complaints, suggestions, or feedback and track their resolution status — all in one platform.') }}
                 </p>
 
                 <!-- Button Group -->
                 <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
                     <a href="{{ route('login') }}" class="btn btn-success btn-lg px-5">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                        <i class="bi bi-box-arrow-in-right me-2"></i>{{ __('Login') }}
                     </a>
                     <a href="{{ route('help-and-support') }}" class="btn btn-outline-dark btn-lg px-5">
-                        <i class="bi bi-question-circle me-2"></i>Help & Support
+                        <i class="bi bi-question-circle me-2"></i>{{ __('Help & Support') }}
                     </a>
                 </div>
             </div>
@@ -44,8 +44,8 @@
             <!-- Footer Section -->
             <div class="card-footer py-3 small"
                  style="border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; background-color: #eef3f7;">
-                &copy; {{ date('Y') }} Dada (Dhaka) Ltd. — Grievance Management System <br>
-                <span class="text-secondary">Developed by the IT Department.</span>
+                &copy; {{ date('Y') }} Dada (Dhaka) Ltd. — {{ __('Grievance Management System') }} <br>
+                <span class="text-secondary">{{ __('Developed by the IT Department.') }}</span>
             </div>
         </div>
     </div>

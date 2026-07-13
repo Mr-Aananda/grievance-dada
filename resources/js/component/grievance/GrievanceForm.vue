@@ -2,7 +2,7 @@
     <div class="card card-primary card-outline shadow-sm border-0 h-100">
         <div class="card-header bg-transparent border-bottom py-3">
             <h5 class="card-title mb-0 fw-bold text-primary">
-                <i class="bi bi-pencil-square me-2"></i> Submit New Grievance
+                <i class="bi bi-pencil-square me-2"></i> {{ $t('Submit New Grievance') }}
             </h5>
         </div>
 
@@ -11,10 +11,10 @@
                 <!-- Category -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">
-                        <i class="bi bi-tag text-primary me-1"></i> Category <span class="text-danger">*</span>
+                        <i class="bi bi-tag text-primary me-1"></i> {{ $t('Category') }} <span class="text-danger">*</span>
                     </label>
                     <select v-model="form.category_id" class="form-select" :class="{ 'is-invalid': errors.category_id }">
-                        <option value="">— Select a category —</option>
+                        <option value="">— {{ $t('— Select a category —') }} —</option>
                         <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                             {{ cat.name }}
                         </option>
@@ -25,11 +25,11 @@
                 <!-- Department -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">
-                        <i class="bi bi-building text-primary me-1"></i> Department
-                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">Optional</span>
+                        <i class="bi bi-building text-primary me-1"></i> {{ $t('Department') }}
+                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">{{ $t('Optional') }}</span>
                     </label>
                     <select v-model="form.department_id" class="form-select">
-                        <option value="">— Select a department —</option>
+                        <option value="">— {{ $t('— Select a department —') }} —</option>
                         <option v-for="dept in departments" :key="dept.id" :value="dept.id">
                             {{ dept.name }}
                         </option>
@@ -39,30 +39,30 @@
                 <!-- Employee ID -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">
-                        <i class="bi bi-person-badge text-primary me-1"></i> Employee ID
-                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">Optional</span>
+                        <i class="bi bi-person-badge text-primary me-1"></i> {{ $t('Employee ID') }}
+                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">{{ $t('Optional') }}</span>
                     </label>
-                    <input type="text" v-model="form.employee_id" class="form-control" placeholder="e.g., EMP-1023" />
+                    <input type="text" v-model="form.employee_id" class="form-control" :placeholder="$t('e.g., EMP-1023')" />
                 </div>
 
                 <!-- Description -->
                 <div class="mb-4">
                     <label class="form-label fw-semibold">
-                        <i class="bi bi-chat-text text-primary me-1"></i> Issue Description <span class="text-danger">*</span>
+                        <i class="bi bi-chat-text text-primary me-1"></i> {{ $t('Issue Description') }} <span class="text-danger">*</span>
                     </label>
                     <div :class="{ 'is-invalid-quill': errors.description }">
                         <QuillEditor
-                            ref="quillRef"
-                            v-model:content="form.description"
-                            contentType="html"
-                            theme="snow"
-                            placeholder="Describe your grievance clearly and in detail…"
-                            :toolbar="[
-                                ['bold', 'italic', 'underline'],
-                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                ['clean']
-                            ]"
-                            style="height: 180px;"
+                             ref="quillRef"
+                             v-model:content="form.description"
+                             contentType="html"
+                             theme="snow"
+                             :placeholder="$t('Describe your grievance clearly and in detail…')"
+                             :toolbar="[
+                                 ['bold', 'italic', 'underline'],
+                                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                 ['clean']
+                             ]"
+                             style="height: 180px;"
                         />
                     </div>
                     <div v-if="errors.description" class="invalid-feedback d-block">{{ errors.description[0] }}</div>
@@ -71,8 +71,8 @@
                 <!-- Attachments -->
                 <div class="mb-4">
                     <label class="form-label fw-semibold">
-                        <i class="bi bi-paperclip text-primary me-1"></i> Attachments
-                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">Optional</span>
+                        <i class="bi bi-paperclip text-primary me-1"></i> {{ $t('Attachments') }}
+                        <span class="badge bg-light text-secondary ms-2 fw-normal" style="font-size: 10px;">{{ $t('Optional') }}</span>
                     </label>
 
                     <div v-if="!files.length" class="gms-dropzone" @click="openFilePicker"
@@ -81,8 +81,8 @@
                         <div class="gms-dropzone-icon">
                             <i class="bi bi-cloud-upload"></i>
                         </div>
-                        <div class="gms-dropzone-text">Click to browse or drag & drop</div>
-                        <div class="gms-dropzone-hint">Images · Videos · PDF · Word · Excel — max 100 MB each</div>
+                        <div class="gms-dropzone-text">{{ $t('Click to browse or drag & drop') }}</div>
+                        <div class="gms-dropzone-hint">{{ $t('Images · Videos · PDF · Word · Excel — max 100 MB each') }}</div>
                     </div>
 
                     <div v-else class="gms-file-grid">
@@ -108,7 +108,7 @@
                     </div>
 
                     <button v-if="files.length" type="button" class="gms-btn-add" @click="openFilePicker">
-                        <i class="bi bi-plus-circle"></i> Add more files
+                        <i class="bi bi-plus-circle"></i> {{ $t('Add more files') }}
                     </button>
 
                     <input ref="fileInput" type="file" multiple style="display: none" @change="onFileChange" />
@@ -117,11 +117,11 @@
                 <button type="submit" class="gms-btn-submit py-3 fw-bold" :disabled="!isFormValid || isSubmitting">
                     <span v-if="isSubmitting" class="gms-spinner"></span>
                     <i v-else class="bi bi-send-fill"></i>
-                    {{ isSubmitting ? 'Submitting...' : 'Submit Grievance' }}
+                    {{ isSubmitting ? $t('Submitting...') : $t('Submit Grievance') }}
                 </button>
 
                 <div class="gms-secure-badge text-center text-muted mt-3 small">
-                    <i class="bi bi-lock-fill me-1 text-success"></i> Secure & Confidential
+                    <i class="bi bi-lock-fill me-1 text-success"></i> {{ $t('Secure & Confidential') }}
                 </div>
             </form>
         </div>
@@ -197,7 +197,9 @@ function onDrop(e) {
 function addFiles(newFiles) {
     for (const file of newFiles) {
         if (file.size > 100 * 1024 * 1024) {
-            showWarningAlert(`"${file.name}" exceeds the 100 MB limit.`, 'File Too Large', {
+            const limitText = window.translations['exceeds the 100 MB limit.'] || 'exceeds the 100 MB limit.';
+            const tooLargeText = window.translations['File Too Large'] || 'File Too Large';
+            showWarningAlert(`"${file.name}" ${limitText}`, tooLargeText, {
                 confirmButtonText: 'OK',
                 customClass: { confirmButton: 'gms-swal-done-btn' },
                 toast: false,
@@ -228,31 +230,39 @@ function removeFile(index) {
 async function handleSubmit() {
     errors.value = {};
 
+    const categoryReq = window.translations['Category is required'] || 'Category is required';
+    const descReq = window.translations['Issue description is required'] || 'Issue description is required';
+
     if (!form.category_id) {
-        errors.value.category_id = ['Category is required'];
+        errors.value.category_id = [categoryReq];
     }
 
     const textDesc = form.description ? form.description.replace(/<[^>]*>/g, '').trim() : '';
     if (!textDesc) {
-        errors.value.description = ['Issue description is required'];
+        errors.value.description = [descReq];
     }
 
     if (Object.keys(errors.value).length) return;
 
+    const confirmTitle = window.translations['Submit Grievance?'] || 'Submit Grievance?';
+    const confirmText = window.translations['Are you sure you want to submit this grievance? Once submitted, it cannot be edited.'] || 'Are you sure you want to submit this grievance? Once submitted, it cannot be edited.';
+    const confirmBtn = window.translations['Submit'] || 'Submit';
+    const cancelBtn = window.translations['Cancel'] || 'Cancel';
+
     // Confirmation dialog before submitting using showConfirmationAlert
     const isConfirmed = await showConfirmationAlert(
-        'Are you sure you want to submit this grievance? Once submitted, it cannot be edited.',
-        'Submit Grievance?',
-        '<i class="bi bi-check2 me-1"></i> Submit',
-        '<i class="bi bi-x-lg me-1"></i> Cancel',
+        confirmText,
+        confirmTitle,
+        `<i class="bi bi-check2 me-1"></i> ${confirmBtn}`,
+        `<i class="bi bi-x-lg me-1"></i> ${cancelBtn}`,
         {
             html: `
                 <div class="gms-swal-confirm-body">
                     <div class="gms-swal-confirm-icon">
                         <i class="bi bi-send-fill"></i>
                     </div>
-                    <h2 class="gms-swal-title">Submit Grievance?</h2>
-                    <p class="gms-swal-desc">Are you sure you want to submit this grievance? Once submitted, it cannot be edited.</p>
+                    <h2 class="gms-swal-title">${confirmTitle}</h2>
+                    <p class="gms-swal-desc">${confirmText}</p>
                 </div>
             `,
             title: '', // Empty because we defined it in HTML block

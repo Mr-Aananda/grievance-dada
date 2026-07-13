@@ -121,4 +121,11 @@ Route::get('/linkstorage', function () {
     return 'Storage link created successfully';
 });
 
+Route::get('/lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'bn', 'ko'])) {
+        session()->put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('lang.switch');
+
 require __DIR__ . '/auth.php';

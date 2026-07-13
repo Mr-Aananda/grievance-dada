@@ -41,10 +41,41 @@
                     </div>
                 </div>
 
-                <!-- Right: Secure & Confidential Badge -->
-                <div class="gms-portal-nav-right">
-                    <span class="gms-portal-badge">
-                        <i class="bi bi-shield-check-fill me-1"></i>Secure &amp; Confidential
+                <!-- Right: Secure & Confidential Badge & Language Switcher -->
+                <div class="gms-portal-nav-right d-flex align-items-center gap-3">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-translate me-1"></i>
+                            <span class="small fw-semibold">
+                                @if(app()->getLocale() == 'bn')
+                                    বাংলা
+                                @elseif(app()->getLocale() == 'ko')
+                                    한국어
+                                @else
+                                    English
+                                @endif
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center {{ app()->getLocale() == 'en' ? 'active' : '' }}" href="{{ route('lang.switch', 'en') }}">
+                                    <span class="me-2">🇺🇸</span> English
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center {{ app()->getLocale() == 'bn' ? 'active' : '' }}" href="{{ route('lang.switch', 'bn') }}">
+                                    <span class="me-2">🇧🇩</span> বাংলা (Bangla)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center {{ app()->getLocale() == 'ko' ? 'active' : '' }}" href="{{ route('lang.switch', 'ko') }}">
+                                    <span class="me-2">🇰🇷</span> 한국어 (Korean)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <span class="gms-portal-badge d-none d-sm-inline-flex">
+                        <i class="bi bi-shield-check-fill me-1"></i>@lang('Secure & Confidential')
                     </span>
                 </div>
             </div>

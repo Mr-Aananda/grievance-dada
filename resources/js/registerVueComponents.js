@@ -14,6 +14,14 @@ const vueApp = createApp({
 });
 const pinia = createPinia();
 
+// Global translation function for Vue components
+vueApp.config.globalProperties.$t = function (key) {
+    if (window.translations && window.translations[key] !== undefined) {
+        return window.translations[key];
+    }
+    return key;
+};
+
 // Vue-Multiselect
 vueApp.component("Multiselect", Multiselect);
 

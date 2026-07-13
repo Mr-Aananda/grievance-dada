@@ -16,11 +16,11 @@
                                 <span class="gms-stat-card-icon"><i :class="['bi', stat.icon]"></i></span>
                                 <h3 class="gms-stat-count mb-0">{{ statusCounts[key] ?? 0 }}</h3>
                             </div>
-                            <p class="gms-stat-label mb-0">{{ stat.label }}</p>
+                            <p class="gms-stat-label mb-0">{{ $t(stat.label) }}</p>
                         </div>
                         <div class="gms-stat-footer">
                             <span class="gms-stat-footer-text">
-                                {{ filterStatus === key ? 'Active Filter' : 'Filter by this' }}
+                                {{ filterStatus === key ? $t('Active Filter') : $t('Filter by this') }}
                             </span>
                             <i :class="['bi', filterStatus === key ? 'bi-x-circle-fill text-danger' : 'bi-chevron-right']"></i>
                         </div>
@@ -35,8 +35,8 @@
                 <div class="d-flex align-items-center gap-2">
                     <span class="gms-tracker-icon"><i class="bi bi-ticket-perforated-fill"></i></span>
                     <div>
-                        <h6 class="mb-0 fw-bold text-dark">Grievance Tracker</h6>
-                        <small class="text-muted">{{ totalRecords }} total records</small>
+                        <h6 class="mb-0 fw-bold text-dark">{{ $t('Grievance Tracker') }}</h6>
+                        <small class="text-muted">{{ totalRecords }} {{ $t('total records') }}</small>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap w-100-mobile">
@@ -45,13 +45,13 @@
                         <input
                             type="text"
                             class="gms-search-input"
-                            placeholder="Search ticket number…"
+                            :placeholder="$t('Search ticket number…')"
                             :value="search"
                             @input="$emit('search-change', $event.target.value)"
                         />
                     </div>
                     <button v-if="search || filterStatus" class="gms-btn-clear" @click="$emit('clear-filters')">
-                        <i class="bi bi-x-lg me-1"></i> Clear
+                        <i class="bi bi-x-lg me-1"></i> {{ $t('Clear') }}
                     </button>
                 </div>
             </div>
@@ -61,11 +61,11 @@
                 <table v-if="(tableLoading || grievances.length) && !tableLoading" class="table table-hover align-middle mb-0 d-none d-md-table">
                     <thead class="gms-thead">
                         <tr>
-                            <th class="ps-4">Ticket #</th>
-                            <th>Category</th>
-                            <th>Department</th>
-                            <th>Status</th>
-                            <th>Submitted</th>
+                            <th class="ps-4">{{ $t('Ticket #') }}</th>
+                            <th>{{ $t('Category') }}</th>
+                            <th>{{ $t('Department') }}</th>
+                            <th>{{ $t('Status') }}</th>
+                            <th>{{ $t('Submitted') }}</th>
                             <th class="pe-4"></th>
                         </tr>
                     </thead>
@@ -98,17 +98,17 @@
                         </div>
                         <div class="row g-2 mb-2">
                             <div class="col-6">
-                                <div class="gms-mobile-meta-label">Category</div>
+                                <div class="gms-mobile-meta-label">{{ $t('Category') }}</div>
                                 <div class="gms-mobile-meta-val text-truncate">{{ g.category?.name || '—' }}</div>
                             </div>
                             <div class="col-6">
-                                <div class="gms-mobile-meta-label">Department</div>
+                                <div class="gms-mobile-meta-label">{{ $t('Department') }}</div>
                                 <div class="gms-mobile-meta-val text-truncate">{{ g.department?.name || '—' }}</div>
                             </div>
                         </div>
                         <div class="d-flex align-items-center justify-content-between pt-2 border-top border-light">
                             <span class="gms-mobile-date"><i class="bi bi-calendar3 me-1"></i>{{ formatDate(g.created_at) }}</span>
-                            <span class="gms-mobile-action">View <i class="bi bi-arrow-right ms-1"></i></span>
+                            <span class="gms-mobile-action">{{ $t('View') }} <i class="bi bi-arrow-right ms-1"></i></span>
                         </div>
                     </div>
                 </div>
@@ -135,8 +135,8 @@
                 <!-- Empty State -->
                 <div v-else-if="!grievances.length" class="gms-empty-state flex-grow-1">
                     <div class="gms-empty-icon"><i class="bi bi-inbox-fill"></i></div>
-                    <h5 class="gms-empty-title">No grievances found</h5>
-                    <p class="gms-empty-sub">Submit a new grievance using the form,<br>or adjust your search filters.</p>
+                    <h5 class="gms-empty-title">{{ $t('No grievances found') }}</h5>
+                    <p class="gms-empty-sub" v-html="$t('Submit a new grievance using the form,<br>or adjust your search filters.')"></p>
                 </div>
             </div>
 

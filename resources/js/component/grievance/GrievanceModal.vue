@@ -6,7 +6,7 @@
                     <div class="gms-modal-header">
                         <h2 class="gms-modal-title">
                             <i class="bi bi-ticket-perforated"></i>
-                            Grievance Details
+                            {{ $t('Grievance Details') }}
                         </h2>
                         <button class="gms-modal-close" @click="$emit('close')" aria-label="Close">
                             <i class="bi bi-x-lg"></i>
@@ -17,14 +17,14 @@
                         <!-- Loading -->
                         <div v-if="loading" class="gms-modal-loading">
                             <div class="gms-spinner-large"></div>
-                            <p>Loading grievance details...</p>
+                            <p>{{ $t('Loading grievance details...') }}</p>
                         </div>
 
                         <!-- Error -->
                         <div v-else-if="error" class="gms-modal-error">
                             <i class="bi bi-exclamation-triangle-fill"></i>
-                            <h3>Failed to Load</h3>
-                            <p>Unable to fetch grievance details. Please try again.</p>
+                            <h3>{{ $t('Failed to Load') }}</h3>
+                            <p>{{ $t('Unable to fetch grievance details. Please try again.') }}</p>
                         </div>
 
                         <!-- Content -->
@@ -32,7 +32,7 @@
                             <!-- Header -->
                             <div class="gms-details-header">
                                 <div>
-                                    <div class="gms-details-label">Ticket Number</div>
+                                    <div class="gms-details-label">{{ $t('Ticket Number') }}</div>
                                     <div class="gms-ticket-copy" @click="$emit('copy-ticket', data.ticket_number)">
                                         <span class="gms-ticket-number">{{ data.ticket_number }}</span>
                                         <i class="bi bi-copy"></i>
@@ -56,7 +56,7 @@
                                         <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('submitted', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
                                             <i class="bi bi-inbox"></i>
                                         </div>
-                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">Submitted</div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">{{ $t('Submitted') }}</div>
                                     </div>
                                     
                                     <!-- Step: Under Review -->
@@ -64,7 +64,7 @@
                                         <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('under_review', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
                                             <i class="bi bi-eye"></i>
                                         </div>
-                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">Under Review</div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">{{ $t('Under Review') }}</div>
                                     </div>
                                     
                                     <!-- Step: In Resolution -->
@@ -72,7 +72,7 @@
                                         <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('in_resolution', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
                                             <i class="bi bi-tools"></i>
                                         </div>
-                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">In Resolution</div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">{{ $t('In Resolution') }}</div>
                                     </div>
                                     
                                     <!-- Step: Resolved -->
@@ -80,7 +80,7 @@
                                         <div :class="['rounded-circle d-flex align-items-center justify-content-center shadow-sm', isStepActive('resolved', data.status) ? 'bg-success text-white border-0' : 'bg-white border text-muted']" style="width: 34px; height: 34px; font-size: 14px; transition: all 0.3s ease;">
                                             <i class="bi bi-check-circle"></i>
                                         </div>
-                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">Resolved</div>
+                                        <div class="small fw-semibold mt-1 position-absolute start-50 translate-middle-x text-nowrap text-muted" style="font-size: 10px; top: 36px;">{{ $t('Resolved') }}</div>
                                     </div>
                                 </div>
                                 <div style="height: 30px;"></div> <!-- Spacer for absolute labels -->
@@ -89,36 +89,36 @@
                             <!-- Info Grid -->
                             <div class="gms-details-grid">
                                 <div>
-                                    <div class="gms-details-label">Category</div>
+                                    <div class="gms-details-label">{{ $t('Category') }}</div>
                                     <div class="gms-details-value">{{ data.category || '—' }}</div>
                                 </div>
                                 <div>
-                                    <div class="gms-details-label">Department</div>
+                                    <div class="gms-details-label">{{ $t('Department') }}</div>
                                     <div class="gms-details-value">{{ data.department || '—' }}</div>
                                 </div>
                                 <div>
-                                    <div class="gms-details-label">Employee ID</div>
+                                    <div class="gms-details-label">{{ $t('Employee ID') }}</div>
                                     <div class="gms-details-value">{{ data.employee_id || '—' }}</div>
                                 </div>
                                 <div>
-                                    <div class="gms-details-label">Submitted</div>
+                                    <div class="gms-details-label">{{ $t('Submitted') }}</div>
                                     <div class="gms-details-value">{{ formatDate(data.created_at) }}</div>
                                 </div>
                                 <div v-if="data.resolved_at">
-                                    <div class="gms-details-label">Resolved</div>
+                                    <div class="gms-details-label">{{ $t('Resolved') }}</div>
                                     <div class="gms-details-value">{{ formatDate(data.resolved_at) }}</div>
                                 </div>
                             </div>
 
                             <!-- Description -->
                             <div class="gms-details-section">
-                                <div class="gms-details-label">Description</div>
+                                <div class="gms-details-label">{{ $t('Description') }}</div>
                                 <div class="gms-details-box ql-editor" v-html="data.description"></div>
                             </div>
 
                             <!-- Admin Remarks -->
                             <div v-if="data.admin_remarks" class="gms-details-section">
-                                <div class="gms-details-label">Admin Remarks & Feedback</div>
+                                <div class="gms-details-label">{{ $t('Admin Remarks & Feedback') }}</div>
                                 <div class="gms-remarks-box">
                                     <i class="bi bi-chat-dots-fill"></i>
                                     <p>{{ data.admin_remarks }}</p>
@@ -129,7 +129,7 @@
                             <div v-if="attachments.length" class="gms-details-section">
                                 <div class="gms-details-label">
                                     <i class="bi bi-paperclip"></i>
-                                    Attachments ({{ attachments.length }})
+                                    {{ $t('Attachments') }} ({{ attachments.length }})
                                 </div>
                                 <div class="gms-attachments-grid">
                                     <!-- Images -->
@@ -161,10 +161,10 @@
                                             <div class="gms-doc-meta">{{ formatFileSize(att.size) }}</div>
                                         </div>
                                         <div class="gms-doc-actions">
-                                            <a :href="att.url" target="_blank" rel="noopener" class="gms-btn-icon" title="View">
+                                            <a :href="att.url" target="_blank" rel="noopener" class="gms-btn-icon" :title="$t('View')">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a :href="att.url" :download="att.file_name" class="gms-btn-icon" title="Download">
+                                            <a :href="att.url" :download="att.file_name" class="gms-btn-icon" :title="$t('Download')">
                                                 <i class="bi bi-download"></i>
                                             </a>
                                         </div>
@@ -176,10 +176,10 @@
 
                     <div class="gms-modal-footer">
                         <button class="gms-btn-secondary" @click="$emit('close')">
-                            <i class="bi bi-x-lg"></i> Close
+                            <i class="bi bi-x-lg"></i> {{ $t('Close') }}
                         </button>
                         <button v-if="data?.ticket_number" class="gms-btn-primary" @click="$emit('copy-ticket', data.ticket_number)">
-                            <i class="bi bi-copy"></i> Copy Ticket
+                            <i class="bi bi-copy"></i> {{ $t('Copy Ticket') }}
                         </button>
                     </div>
                 </div>

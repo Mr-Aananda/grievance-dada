@@ -5,9 +5,9 @@
             <div v-if="isSubmitting" class="gms-submit-loading-overlay">
                 <div class="gms-submit-loading-card">
                     <div class="gms-spinner-large"></div>
-                    <h5 class="gms-submit-loading-title">প্রক্রিয়াকরণ করা হচ্ছে...</h5>
-                    <p class="gms-submit-loading-text">আপনার অভিযোগটি সাবমিট হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন।</p>
-                    <span class="gms-submit-loading-subtext">Processing... Please do not close or refresh this page.</span>
+                    <h5 class="gms-submit-loading-title">{{ $t('Submitting...') }}</h5>
+                    <p class="gms-submit-loading-text">{{ $t('Your grievance is being submitted, please wait.') }}</p>
+                    <span class="gms-submit-loading-subtext">{{ $t('Processing... Please do not close or refresh this page.') }}</span>
                 </div>
             </div>
         </Transition>
@@ -41,8 +41,8 @@
                                             <div class="gms-advisory-logo-wrap mx-auto mb-2">
                                                 <img :src="logoUrl" alt="DADA Logo" class="gms-advisory-logo">
                                             </div>
-                                            <h6 class="fw-bold mb-1 text-dark">DADA (Dhaka) Ltd.</h6>
-                                            <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 10px;">Redressal Committee</span>
+                                            <h6 class="fw-bold mb-1 text-dark">{{ $t('DADA (Dhaka) Ltd.') }}</h6>
+                                            <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 10px;">{{ $t('Redressal Committee') }}</span>
                                         </div>
 
                                         <!-- Warning Box (সতর্কীকরণ) -->
@@ -50,9 +50,9 @@
                                             <div class="d-flex gap-2">
                                                 <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
                                                 <div>
-                                                    <h6 class="fw-bold text-dark mb-1 small-title">সতর্কীকরণ / Notice</h6>
+                                                    <h6 class="fw-bold text-dark mb-1 small-title">{{ $t('Notice') }}</h6>
                                                     <p class="mb-0 text-muted extra-small">
-                                                        অভিযোগের বিবরণে দয়া করে কোনো গোপনীয় পাসওয়ার্ড বা ব্যক্তিগত আর্থিক লেনদেন সংক্রান্ত তথ্য শেয়ার করবেন না।
+                                                        {{ $t('Please do not share any confidential passwords or personal financial transaction information in the grievance description.') }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -61,26 +61,20 @@
                                         <!-- Guidelines List -->
                                         <div class="mb-4">
                                             <h6 class="fw-bold text-dark mb-3 small-title">
-                                                <i class="bi bi-info-circle text-primary me-2"></i>নির্দেশিকা / Guidelines
+                                                <i class="bi bi-info-circle text-primary me-2"></i>{{ $t('Guidelines') }}
                                             </h6>
                                             <ul class="gms-guide-list ps-0 mb-0">
                                                 <li class="gms-guide-item">
-                                                    <span class="gms-guide-num">১</span>
-                                                    <div class="gms-guide-text">
-                                                        সঠিক <strong>Category</strong> নির্বাচন করুন এবং আপনার অভিযোগটি পরিষ্কারভাবে বর্ণনা করুন।
-                                                    </div>
+                                                    <span class="gms-guide-num">1</span>
+                                                    <div class="gms-guide-text" v-html="$t('Select the correct category and describe your grievance clearly and in detail.')"></div>
                                                 </li>
                                                 <li class="gms-guide-item">
-                                                    <span class="gms-guide-num">২</span>
-                                                    <div class="gms-guide-text">
-                                                        অভিযোগের সপক্ষে কোনো প্রমাণ বা নথিপত্র (ছবি বা পিডিএফ) থাকলে তা সংযুক্ত করুন।
-                                                    </div>
+                                                    <span class="gms-guide-num">2</span>
+                                                    <div class="gms-guide-text" v-html="$t('Attach any supporting evidence (images, videos, documents) if available.')"></div>
                                                 </li>
                                                 <li class="gms-guide-item">
-                                                    <span class="gms-guide-num">৩</span>
-                                                    <div class="gms-guide-text">
-                                                        সাবমিট করার পর <strong>Ticket ID</strong> টি কপি করে রাখুন, যা পরবর্তীতে স্ট্যাটাস ট্র্যাকিংয়ে সাহায্য করবে।
-                                                    </div>
+                                                    <span class="gms-guide-num">3</span>
+                                                    <div class="gms-guide-text" v-html="$t('Copy and save the Ticket Number after submission for tracking.')"></div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -89,8 +83,8 @@
                                     <!-- Security shield info -->
                                     <div class="gms-security-shield text-center p-3 border rounded-3 bg-light-subtle">
                                         <i class="bi bi-shield-lock-fill text-success fs-4 mb-2 d-block"></i>
-                                        <span class="fw-bold text-dark d-block small">100% Encrypted &amp; Confidential</span>
-                                        <span class="text-muted extra-small">Your inputs are protected by secure industry standards.</span>
+                                        <span class="fw-bold text-dark d-block small">{{ $t('100% Encrypted & Confidential') }}</span>
+                                        <span class="text-muted extra-small">{{ $t('Your inputs are protected by secure industry standards.') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -201,10 +195,12 @@ const mediaImages = computed(() => {
 
 async function copyTicket(ticket) {
     if (!ticket) return;
+    const successMsg = window.translations['✓ Ticket number copied!'] || '✓ Ticket number copied!';
+    const failMsg    = window.translations['Copy failed — please copy manually'] || 'Copy failed — please copy manually';
     try {
         if (navigator.clipboard?.writeText) {
             await navigator.clipboard.writeText(ticket);
-            showToast('✓ Ticket number copied!', 'success');
+            showToast(successMsg, 'success');
         } else {
             const ta = document.createElement('textarea');
             ta.value = ticket;
@@ -213,10 +209,10 @@ async function copyTicket(ticket) {
             ta.focus(); ta.select();
             const ok = document.execCommand('copy');
             document.body.removeChild(ta);
-            showToast(ok ? '✓ Ticket number copied!' : 'Copy failed — please copy manually', ok ? 'success' : 'error');
+            showToast(ok ? successMsg : failMsg, ok ? 'success' : 'error');
         }
     } catch {
-        showToast('Copy failed — please copy manually', 'error');
+        showToast(failMsg, 'error');
     }
 }
 
