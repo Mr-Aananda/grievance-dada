@@ -1,34 +1,6 @@
 <template>
     <div class="d-flex flex-column h-100">
 
-        <!-- Responsive Modern Stat Cards -->
-        <div class="gms-stats-container mb-4">
-            <div class="row g-3">
-                <div v-for="(stat, key) in statDefs" :key="key" class="col-6 col-xxl-3">
-                    <div
-                        :class="['gms-stat-card', `gms-stat-${key}`, filterStatus === key && 'gms-stat-active']"
-                        @click="$emit('filter-change', filterStatus === key ? '' : key)"
-                        role="button" tabindex="0"
-                        @keyup.enter="$emit('filter-change', filterStatus === key ? '' : key)"
-                    >
-                        <div class="gms-stat-card-body">
-                            <div class="gms-stat-header-row">
-                                <span class="gms-stat-card-icon"><i :class="['bi', stat.icon]"></i></span>
-                                <h3 class="gms-stat-count mb-0">{{ statusCounts[key] ?? 0 }}</h3>
-                            </div>
-                            <p class="gms-stat-label mb-0">{{ $t(stat.label) }}</p>
-                        </div>
-                        <div class="gms-stat-footer">
-                            <span class="gms-stat-footer-text">
-                                {{ filterStatus === key ? $t('Active Filter') : $t('Filter by this') }}
-                            </span>
-                            <i :class="['bi', filterStatus === key ? 'bi-x-circle-fill text-danger' : 'bi-chevron-right']"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Grievance Tracker Card -->
         <div class="card border-0 shadow-sm flex-grow-1 gms-tracker-card">
             <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -36,7 +8,7 @@
                     <span class="gms-tracker-icon"><i class="bi bi-ticket-perforated-fill"></i></span>
                     <div>
                         <h6 class="mb-0 fw-bold text-dark">{{ $t('Grievance Tracker') }}</h6>
-                        <small class="text-muted">{{ totalRecords }} {{ $t('total records') }}</small>
+                        <small v-if="search" class="text-muted">{{ totalRecords }} {{ $t('results found') }}</small>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap w-100-mobile">
@@ -134,9 +106,18 @@
 
                 <!-- Empty State -->
                 <div v-else-if="!grievances.length" class="gms-empty-state flex-grow-1">
-                    <div class="gms-empty-icon"><i class="bi bi-inbox-fill"></i></div>
-                    <h5 class="gms-empty-title">{{ $t('No grievances found') }}</h5>
-                    <p class="gms-empty-sub" v-html="$t('Submit a new grievance using the form,<br>or adjust your search filters.')"></p>
+                    <div class="gms-empty-icon">
+                        <i :class="['bi', search ? 'bi-search-heart' : 'bi-ticket-perforated']"></i>
+                    </div>
+                    <h5 class="gms-empty-title">
+                        {{ search ? $t('No grievance found') : $t('Track Your Grievance') }}
+                    </h5>
+                    <p class="gms-empty-sub">
+                        {{ search 
+                            ? $t('We could not find any grievance matching that ticket number. Please check the spelling and try again.') 
+                            : $t('Enter your exact Ticket Number in the search box above to track its current status.') 
+                        }}
+                    </p>
                 </div>
             </div>
 

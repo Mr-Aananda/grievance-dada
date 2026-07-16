@@ -82,7 +82,7 @@
                             <i class="bi bi-cloud-upload"></i>
                         </div>
                         <div class="gms-dropzone-text">{{ $t('Click to browse or drag & drop') }}</div>
-                        <div class="gms-dropzone-hint">{{ $t('Images · Videos · PDF · Word · Excel — max 100 MB each') }}</div>
+                        <div class="gms-dropzone-hint">{{ $t('Video max 50 MB · Image & File max 10 MB each') }}</div>
                     </div>
 
                     <div v-else class="gms-file-grid">
@@ -117,7 +117,11 @@
                 <button type="submit" class="gms-btn-submit py-3 fw-bold" :disabled="!isFormValid || isSubmitting">
                     <span v-if="isSubmitting" class="gms-spinner"></span>
                     <i v-else class="bi bi-send-fill"></i>
-                    {{ isSubmitting ? $t('Submitting...') : $t('Submit Grievance') }}
+                    {{ isSubmitting 
+                        ? (uploadProgress > 0 && uploadProgress < 100 
+                            ? $t('Uploading...') + ` ${uploadProgress}%` 
+                            : $t('Submitting...')) 
+                        : $t('Submit Grievance') }}
                 </button>
 
                 <div class="gms-secure-badge text-center text-muted mt-3 small">
@@ -133,11 +137,13 @@ import { ref, reactive, computed, nextTick } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { showConfirmationAlert, showWarningAlert } from '../../utils/alert.js';
+import Compressor from 'compressorjs';
 
 const props = defineProps({
     categories: { type: Array, default: () => [] },
     departments: { type: Array, default: () => [] },
     isSubmitting: { type: Boolean, default: false },
+    uploadProgress: { type: Number, default: 0 },
 });
 
 const emit = defineEmits(['submit']);
@@ -183,21 +189,75 @@ function openFilePicker() {
     fileInput.value.click();
 }
 
-function onFileChange(e) {
-    addFiles([...e.target.files]);
+async function onFileChange(e) {
+    await addFiles([...e.target.files]);
 }
 
 // Drag and drop support
-function onDrop(e) {
+async function onDrop(e) {
     e.preventDefault();
     isDragging.value = false;
-    addFiles([...e.dataTransfer.files]);
+    await addFiles([...e.dataTransfer.files]);
 }
 
-function addFiles(newFiles) {
-    for (const file of newFiles) {
-        if (file.size > 100 * 1024 * 1024) {
-            const limitText = window.translations['exceeds the 100 MB limit.'] || 'exceeds the 100 MB limit.';
+function compressImage(file) {
+    return new Promise((resolve) => {
+        // Skip GIFs
+        if (file.type === 'image/gif') {
+            resolve(file);
+            return;
+        }
+        
+        new Compressor(file, {
+            quality: 0.8,
+            maxWidth: 1920,
+            maxHeight: 1080,
+            convertSize: 1048576, // convert PNG to JPEG if > 1MB to save space
+            success(result) {
+                // Keep the original name but potentially change extension if format changed
+                let name = file.name;
+                const originalExt = file.name.split('.').pop().toLowerCase();
+                const newExt = result.type.split('/').pop(); // e.g. jpeg
+                
+                if (originalExt !== newExt && (newExt === 'jpeg' || newExt === 'png')) {
+                    const baseName = file.name.substring(0, file.name.lastIndexOf('.'));
+                    name = `${baseName}.${newExt === 'jpeg' ? 'jpg' : newExt}`;
+                }
+                
+                const compressedFile = new File([result], name, {
+                    type: result.type,
+                    lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+            },
+            error(err) {
+                console.warn('Image compression failed, using original file:', err);
+                resolve(file);
+            },
+        });
+    });
+}
+
+async function addFiles(newFiles) {
+    for (let file of newFiles) {
+        // Compress image if it is compressible
+        const isCompressible = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type);
+        if (isCompressible) {
+            file = await compressImage(file);
+        }
+
+        let maxSize = 10 * 1024 * 1024; // 10 MB default
+        let limitLabel = '10 MB';
+        let limitKey = 'exceeds the 10 MB limit.';
+
+        if (file.type.startsWith('video/')) {
+            maxSize = 50 * 1024 * 1024; // 50 MB for video
+            limitLabel = '50 MB';
+            limitKey = 'exceeds the 50 MB limit.';
+        }
+
+        if (file.size > maxSize) {
+            const limitText = window.translations[limitKey] || `exceeds the ${limitLabel} limit.`;
             const tooLargeText = window.translations['File Too Large'] || 'File Too Large';
             showWarningAlert(`"${file.name}" ${limitText}`, tooLargeText, {
                 confirmButtonText: 'OK',
@@ -209,6 +269,7 @@ function addFiles(newFiles) {
             });
             continue;
         }
+
         if (!files.value.some(f => f.name === file.name && f.size === file.size)) {
             // Generate local preview URL for image files
             if (file.type.startsWith('image/')) {

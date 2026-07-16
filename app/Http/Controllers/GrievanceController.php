@@ -22,27 +22,23 @@ class GrievanceController extends Controller
     public function index(Request $request): View|JsonResponse
     {
         $search = $request->string('search')->trim()->value();
-        $filterStatus = $request->string('status')->trim()->value();
 
-        $query = Grievance::with(['category', 'department'])
-            ->when($search, fn($q) => $q->where('ticket_number', 'like', "%{$search}%"))
-            ->when($filterStatus, fn($q) => $q->where('status', $filterStatus))
-            ->latest();
-
-        $statusCounts = Grievance::selectRaw('status, count(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status')
-            ->toArray();
-
-        // Ensure all status keys exist with a default of 0
-        $statusCounts = array_merge(
-            ['submitted' => 0, 'under_review' => 0, 'in_resolution' => 0, 'resolved' => 0],
-            $statusCounts,
-        );
-
-        // ── JSON response for Vue (AJAX table fetch / filter) ──
+        // ── JSON response for Vue (AJAX table fetch) ──
         if ($request->expectsJson()) {
-            $grievances = $query->paginate(10);
+            if (empty($search)) {
+                return response()->json([
+                    'data' => [],
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'total' => 0,
+                    'status_counts' => ['submitted' => 0, 'under_review' => 0, 'in_resolution' => 0, 'resolved' => 0],
+                ]);
+            }
+
+            // Strict exact match to secure public tracking page
+            $grievances = Grievance::with(['category', 'department'])
+                ->where('ticket_number', $search)
+                ->paginate(10);
 
             return response()->json([
                 'data' => $grievances->map(fn($g) => [
@@ -57,13 +53,14 @@ class GrievanceController extends Controller
                 'current_page' => $grievances->currentPage(),
                 'last_page' => $grievances->lastPage(),
                 'total' => $grievances->total(),
-                'status_counts' => $statusCounts,
+                'status_counts' => ['submitted' => 0, 'under_review' => 0, 'in_resolution' => 0, 'resolved' => 0],
             ]);
         }
 
         // ── Blade response (initial page load) ────────────────
         $categories = Category::where('status', true)->orderBy('name')->get();
         $departments = Department::where('status', true)->orderBy('name')->get();
+        $statusCounts = ['submitted' => 0, 'under_review' => 0, 'in_resolution' => 0, 'resolved' => 0];
 
         return view('grievance-portal', compact(
             'categories',
@@ -140,7 +137,7 @@ class GrievanceController extends Controller
      * PDFs            → inline (browser renders in built-in PDF viewer)
      * Other documents → forced download (Content-Disposition: attachment)
      */
-    public function stream(Request $request, Media $media): StreamedResponse
+    public function stream(Request $request, Media $media): \Symfony\Component\HttpFoundation\Response
     {
         $path = $media->getPath();
 
@@ -150,9 +147,28 @@ class GrievanceController extends Controller
         $fileName = $media->file_name;
         $size = filesize($path);
 
-        $isInline = $this->shouldBeInline($mime);
+        $view = $request->has('view');
+        $download = $request->has('download');
+
+        // On production environments, redirect office documents to Google Docs Web Viewer for inline reading
+        if ($view && (str_contains($mime, 'excel') || str_contains($mime, 'spreadsheet') || str_contains($mime, 'word') || str_contains($mime, 'officedocument') || str_contains($mime, 'powerpoint') || str_contains($mime, 'presentation'))) {
+            $appUrl = config('app.url');
+            if (!preg_match('/(localhost|127\.0\.0\.1|\.test)/i', $appUrl)) {
+                $publicUrl = route('grievance.media.stream', ['media' => $media->id, 'download' => 1]);
+                return redirect('https://docs.google.com/viewer?url=' . urlencode($publicUrl) . '&embedded=true');
+            }
+        }
+
+        if ($download) {
+            $isInline = false;
+        } elseif ($view) {
+            $isInline = true;
+        } else {
+            $isInline = $this->shouldBeInline($mime);
+        }
+
         $disposition = $isInline
-            ? 'inline'
+            ? 'inline; filename="' . addslashes($fileName) . '"'
             : 'attachment; filename="' . addslashes($fileName) . '"';
 
         // Support byte-range requests so <video> elements can seek
@@ -211,9 +227,11 @@ class GrievanceController extends Controller
      */
     private function shouldBeInline(string $mime): bool
     {
+        $mime = strtolower($mime);
         return str_starts_with($mime, 'image/')
             || str_starts_with($mime, 'video/')
-            || $mime === 'application/pdf';
+            || $mime === 'application/pdf'
+            || str_contains($mime, 'pdf');
     }
 
     private function resolveCollection(string $mime): string

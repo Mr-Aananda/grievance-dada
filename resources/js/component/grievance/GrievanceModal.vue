@@ -158,13 +158,13 @@
                                         <i :class="['bi', getFileIcon(att.mime_type)]"></i>
                                         <div class="gms-doc-info">
                                             <div class="gms-doc-name">{{ att.original_name || att.file_name }}</div>
-                                            <div class="gms-doc-meta">{{ formatFileSize(att.size) }}</div>
+                                            <div class="gms-doc-meta">{{ att.size }}</div>
                                         </div>
                                         <div class="gms-doc-actions">
-                                            <a :href="att.url" target="_blank" rel="noopener" class="gms-btn-icon" :title="$t('View')">
+                                            <a :href="att.url + '?view=1'" target="_blank" rel="noopener" class="gms-btn-icon" :title="$t('View')">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a :href="att.url" :download="att.file_name" class="gms-btn-icon" :title="$t('Download')">
+                                            <a :href="att.url + '?download=1'" :download="att.file_name" class="gms-btn-icon" :title="$t('Download')">
                                                 <i class="bi bi-download"></i>
                                             </a>
                                         </div>

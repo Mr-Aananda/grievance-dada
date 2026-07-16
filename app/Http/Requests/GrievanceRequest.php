@@ -13,20 +13,48 @@ class GrievanceRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'department_id' => ['nullable', 'integer', 'exists:departments,id'],
             'employee_id' => ['nullable', 'string', 'max:50'],
             'description' => ['required', 'string', 'min:10', 'max:5000'],
             'files' => ['nullable', 'array', 'max:10'],
-            'files.*' => [
-                'file',
-                'max:102400',                                // 100 MB
-                'mimes:jpg,jpeg,png,gif,webp,bmp,'
-                . 'mp4,avi,mov,wmv,mkv,webm,'
-                . 'pdf,doc,docx,xls,xlsx,txt,csv',
-            ],
         ];
+
+        if ($this->hasFile('files')) {
+            $files = $this->file('files');
+            if (is_array($files)) {
+                foreach ($files as $key => $file) {
+                    if ($file instanceof \Illuminate\Http\UploadedFile) {
+                        $mime = $file->getMimeType();
+                        if (str_starts_with($mime, 'video/')) {
+                            // Max 50 MB = 51200 KB
+                            $rules["files.{$key}"] = [
+                                'file',
+                                'max:51200',
+                                'mimes:mp4,avi,mov,wmv,mkv,webm',
+                            ];
+                        } elseif (str_starts_with($mime, 'image/')) {
+                            // Max 10 MB = 10240 KB
+                            $rules["files.{$key}"] = [
+                                'file',
+                                'max:10240',
+                                'mimes:jpg,jpeg,png,gif,webp,bmp',
+                            ];
+                        } else {
+                            // Max 10 MB = 10240 KB
+                            $rules["files.{$key}"] = [
+                                'file',
+                                'max:10240',
+                                'mimes:pdf,doc,docx,xls,xlsx,txt,csv',
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $rules;
     }
 
     public function messages(): array
@@ -40,7 +68,7 @@ class GrievanceRequest extends FormRequest
             'description.max' => 'Description cannot exceed 5,000 characters.',
             'files.max' => 'You can upload a maximum of 10 files.',
             'files.*.file' => 'One or more uploads are not valid files.',
-            'files.*.max' => 'Each file must not exceed 100 MB.',
+            'files.*.max' => 'File size exceeds the allowed limit (10 MB for images/files, 50 MB for videos).',
             'files.*.mimes' => 'Unsupported file type. Allowed: images, videos, PDF, Word, Excel, text.',
         ];
     }

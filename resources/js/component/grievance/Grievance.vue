@@ -27,6 +27,7 @@
                                 :departments="departments"
                                 :store-url="storeUrl"
                                 :is-submitting="isSubmitting"
+                                :upload-progress="uploadProgress"
                                 @submit="handleSubmit"
                             />
                         </div>
@@ -172,6 +173,7 @@ const activeTab = computed({
 
 const newTicket    = ref(props.initialTicket);
 const isSubmitting = ref(false);
+const uploadProgress = ref(0);
 const formRef      = ref(null);
 const search       = ref('');
 const filterStatus = ref('');
@@ -220,6 +222,7 @@ async function copyTicket(ticket) {
 
 async function handleSubmit(formData, files) {
     isSubmitting.value = true;
+    uploadProgress.value = 0;
     try {
         const fd = new FormData();
         fd.append('category_id', formData.category_id);
@@ -229,7 +232,14 @@ async function handleSubmit(formData, files) {
         files.forEach((f, i) => fd.append(`files[${i}]`, f));
         const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         if (csrf) fd.append('_token', csrf);
-        const res = await axios.post(props.storeUrl, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        const res = await axios.post(props.storeUrl, fd, { 
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress: (progressEvent) => {
+                if (progressEvent.total) {
+                    uploadProgress.value = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                }
+            }
+        });
         if (res.data.success) {
             formRef.value?.reset();
             isSubmitting.value = false;

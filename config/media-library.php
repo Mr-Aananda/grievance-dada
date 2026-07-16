@@ -94,7 +94,7 @@ return [
      * Here you can specify which path generator should be used for the given class.
      */
     'custom_path_generators' => [
-        App\Models\Complain::class => App\Services\Media\QmsMediaPathGenerator::class,
+        App\Models\Grievance::class => App\Services\Media\QmsMediaPathGenerator::class,
     ],
 
     /*
