@@ -43,8 +43,8 @@
                                 </span>
                             </div>
 
-                            <!-- Status Timeline Progress Steps -->
-                            <div class="mb-5 text-center">
+                            <!-- Desktop Horizontal Timeline (shown on md and up) -->
+                            <div class="mb-5 text-center d-none d-md-block">
                                 <div class="d-flex justify-content-between align-items-center position-relative mx-auto" style="max-width: 500px;">
                                     <!-- Progress Line Background -->
                                     <div class="position-absolute top-50 start-0 end-0 translate-middle-y bg-secondary-subtle" style="height: 4px; z-index: 1;"></div>
@@ -84,6 +84,60 @@
                                     </div>
                                 </div>
                                 <div style="height: 30px;"></div> <!-- Spacer for absolute labels -->
+                            </div>
+
+                            <!-- Mobile Vertical Timeline (shown on mobile) -->
+                            <div class="gms-mobile-timeline mb-5 d-md-none">
+                                <div class="gms-mobile-timeline-step" :class="{ 'gms-step-active': isStepActive('submitted', data.status) }">
+                                    <div class="gms-timeline-indicator">
+                                        <div class="gms-timeline-dot">
+                                            <i class="bi bi-inbox"></i>
+                                        </div>
+                                        <div class="gms-timeline-line"></div>
+                                    </div>
+                                    <div class="gms-timeline-content">
+                                        <div class="gms-timeline-title">{{ $t('Submitted') }}</div>
+                                        <div class="gms-timeline-desc">{{ isStepActive('submitted', data.status) ? $t('Grievance received and registered.') : '' }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="gms-mobile-timeline-step" :class="{ 'gms-step-active': isStepActive('under_review', data.status) }">
+                                    <div class="gms-timeline-indicator">
+                                        <div class="gms-timeline-dot">
+                                            <i class="bi bi-eye"></i>
+                                        </div>
+                                        <div class="gms-timeline-line"></div>
+                                    </div>
+                                    <div class="gms-timeline-content">
+                                        <div class="gms-timeline-title">{{ $t('Under Review') }}</div>
+                                        <div class="gms-timeline-desc">{{ isStepActive('under_review', data.status) ? $t('Redressal committee is reviewing details.') : '' }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="gms-mobile-timeline-step" :class="{ 'gms-step-active': isStepActive('in_resolution', data.status) }">
+                                    <div class="gms-timeline-indicator">
+                                        <div class="gms-timeline-dot">
+                                            <i class="bi bi-tools"></i>
+                                        </div>
+                                        <div class="gms-timeline-line"></div>
+                                    </div>
+                                    <div class="gms-timeline-content">
+                                        <div class="gms-timeline-title">{{ $t('In Resolution') }}</div>
+                                        <div class="gms-timeline-desc">{{ isStepActive('in_resolution', data.status) ? $t('Resolution actions are underway.') : '' }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="gms-mobile-timeline-step" :class="{ 'gms-step-active': isStepActive('resolved', data.status) }">
+                                    <div class="gms-timeline-indicator">
+                                        <div class="gms-timeline-dot">
+                                            <i class="bi bi-check-circle"></i>
+                                        </div>
+                                    </div>
+                                    <div class="gms-timeline-content">
+                                        <div class="gms-timeline-title">{{ $t('Resolved') }}</div>
+                                        <div class="gms-timeline-desc">{{ isStepActive('resolved', data.status) ? $t('Grievance resolved successfully.') : '' }}</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Info Grid -->

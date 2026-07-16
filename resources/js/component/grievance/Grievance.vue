@@ -19,7 +19,7 @@
                 <div v-if="activeTab === 'submit'" key="submit-view">
                     <div class="row g-4">
                         <!-- Left: Form -->
-                        <div class="col-12 col-lg-6 d-flex flex-column">
+                        <div class="col-12 col-lg-7 col-xl-8 d-flex flex-column">
                             <GrievanceForm
                                 ref="formRef"
                                 class="flex-grow-1"
@@ -33,7 +33,7 @@
                         </div>
 
                         <!-- Right: Advisory Sidebar -->
-                        <div class="col-12 col-lg-6">
+                        <div class="col-12 col-lg-5 col-xl-4">
                             <div class="card border-0 shadow-sm gms-advisory-card h-100">
                                 <div class="card-body p-4 d-flex flex-column justify-content-between">
                                     <div>

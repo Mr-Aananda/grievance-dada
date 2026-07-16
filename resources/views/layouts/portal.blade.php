@@ -8,14 +8,14 @@
         <nav :class="['gms-portal-nav', activeTab === 'submit' ? 'nav-submit' : 'nav-track']">
             <div class="gms-portal-nav-inner">
                 <!-- Left: Branding -->
-                <div class="gms-portal-nav-brand d-flex align-items-center gap-3">
+                <div class="gms-portal-nav-brand d-flex align-items-center gap-2 gap-md-3">
                     <div class="gms-portal-nav-logo">
                         <img src="{{ Vite::asset('resources/assets/images/logo/dada_bg.png') }}" alt="DADA Logo">
                     </div>
-                    <div class="d-none d-md-block">
+                    <div>
                         <div class="gms-portal-nav-title">DADA (Dhaka) Ltd.</div>
-                        <div class="gms-portal-nav-sub">
-                            <span class="gms-portal-dot"></span> Grievance Redressal Portal
+                        <div class="gms-portal-nav-sub d-none d-sm-flex align-items-center gap-1">
+                            <span class="gms-portal-dot"></span> {{ __('Grievance Redressal Portal') }}
                         </div>
                     </div>
                 </div>
@@ -24,14 +24,14 @@
                 <div class="gms-portal-tabs-container">
                     <div class="gms-portal-tabs">
                         <button 
-                            :class="['gms-tab-btn', activeTab === 'submit' && 'active']"
+                            :class="['gms-tab-btn', activeTab === 'submit' ? 'active' : '']"
                             @click="activeTab = 'submit'"
                         >
                             <i class="bi bi-pencil-square"></i>
                             <span>Submit Grievance</span>
                         </button>
                         <button 
-                            :class="['gms-tab-btn', activeTab === 'track' && 'active']"
+                            :class="['gms-tab-btn', activeTab === 'track' ? 'active' : '']"
                             @click="activeTab = 'track'"
                         >
                             <i class="bi bi-search"></i>
@@ -42,17 +42,26 @@
                 </div>
 
                 <!-- Right: Secure & Confidential Badge & Language Switcher -->
-                <div class="gms-portal-nav-right d-flex align-items-center gap-3">
-                    <div class="dropdown">
+                <div class="gms-portal-nav-right d-flex align-items-center gap-2 gap-sm-3">
+                    <!-- Theme Toggle Button -->
+                    <button id="gms-theme-toggle" type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 50%; padding: 0;" title="Toggle Theme">
+                        <i class="bi bi-sun"></i>
+                        <i class="bi bi-moon"></i>
+                    </button>
+
+                    <div class="dropdown gms-lang-dropdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-translate me-1"></i>
-                            <span class="small fw-semibold">
+                            <span class="small fw-semibold ms-1">
                                 @if(app()->getLocale() == 'bn')
-                                    বাংলা
+                                    <span class="d-none d-md-inline">বাংলা</span>
+                                    <span class="d-inline d-md-none">BN</span>
                                 @elseif(app()->getLocale() == 'ko')
-                                    한국어
+                                    <span class="d-none d-md-inline">한국어</span>
+                                    <span class="d-inline d-md-none">KO</span>
                                 @else
-                                    English
+                                    <span class="d-none d-md-inline">English</span>
+                                    <span class="d-inline d-md-none">EN</span>
                                 @endif
                             </span>
                         </button>
@@ -95,5 +104,17 @@
 
     @include('layouts.partials.script')
     @stack('script')
+
+    <script>
+        document.addEventListener('click', function(event) {
+            const toggleButton = event.target.closest('#gms-theme-toggle');
+            if (toggleButton) {
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            }
+        });
+    </script>
 </body>
 </html>
