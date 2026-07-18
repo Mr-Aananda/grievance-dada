@@ -78,7 +78,37 @@
                     @canany(['dashboard'])
                         <li>
                             <a class="dropdown-item" href="{{ route('dashboard') }}">
-                                <i class="bi bi-speedometer me-2 text-primary"></i> {{ __('Dashboard') }}
+                                <i class="bi bi-speedometer2 me-2 text-primary"></i> {{ __('Dashboard') }}
+                            </a>
+                        </li>
+                    @endcanany
+
+                    <li>
+                        <a class="dropdown-item" href="{{ route('admin.grievance.index') }}">
+                            <i class="bi bi-ticket-perforated me-2 text-info"></i> {{ __('Grievance Tickets') }}
+                        </a>
+                    </li>
+
+                    @canany(['department.index'])
+                        <li>
+                            <a class="dropdown-item" href="{{ route('department.index') }}">
+                                <i class="bi bi-building me-2 text-warning"></i> {{ __('Departments') }}
+                            </a>
+                        </li>
+                    @endcanany
+
+                    @canany(['section.index'])
+                        <li>
+                            <a class="dropdown-item" href="{{ route('section.index') }}">
+                                <i class="bi bi-diagram-3 me-2 text-muted"></i> {{ __('Sections') }}
+                            </a>
+                        </li>
+                    @endcanany
+
+                    @canany(['category.index'])
+                        <li>
+                            <a class="dropdown-item" href="{{ route('category.index') }}">
+                                <i class="bi bi-tags me-2 text-secondary"></i> {{ __('Categories') }}
                             </a>
                         </li>
                     @endcanany

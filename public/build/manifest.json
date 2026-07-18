@@ -64,7 +64,7 @@
     "src": "resources/assets/images/users/user2.png"
   },
   "resources/js/app-legacy.js": {
-    "file": "assets/app-legacy--wU2PM9Q.js",
+    "file": "assets/app-legacy-C-cAE3CF.js",
     "name": "app",
     "src": "resources/js/app-legacy.js",
     "isEntry": true,
@@ -74,12 +74,12 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-sSqrPBoU.js",
+    "file": "assets/app-zKqzmMuO.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-BtvMzQYV.css"
+      "assets/app-AU775w5a.css"
     ],
     "assets": [
       "assets/bootstrap-icons-mSm7cUeB.woff2",

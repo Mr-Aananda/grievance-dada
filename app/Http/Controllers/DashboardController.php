@@ -60,6 +60,22 @@ class DashboardController extends Controller
         usort($categoryStats, fn($a, $b) => $b['count'] <=> $a['count']);
         usort($departmentStats, fn($a, $b) => $b['count'] <=> $a['count']);
 
+        // Get grievance trend for last 7 days
+        $trendLabels = [];
+        $trendCreated = [];
+        $trendResolved = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i)->toDateString();
+            $label = Carbon::now()->subDays($i)->format('d M');
+            $trendLabels[] = $label;
+            
+            $trendCreated[] = Grievance::whereDate('created_at', $date)->count();
+            $trendResolved[] = Grievance::whereDate('created_at', $date)
+                ->where('status', 'resolved')
+                ->count();
+        }
+
         $recentGrievances = Grievance::with(['category', 'department'])->latest()->take(6)->get();
 
         return view('dashboard', compact(
@@ -68,7 +84,10 @@ class DashboardController extends Controller
             'todayGrowth',
             'categoryStats',
             'departmentStats',
-            'recentGrievances'
+            'recentGrievances',
+            'trendLabels',
+            'trendCreated',
+            'trendResolved'
         ));
     }
 }

@@ -3,7 +3,7 @@
     <!-- Brand Logo -->
     <div class="sidebar-brand">
         <a href="{{ route('dashboard') }}" class="brand-link text-decoration-none">
-            <span class="brand-text fw-bold" style="font-size:22px; letter-spacing:1px;">{{ __('GMS Admin') }}</span>
+            <span class="brand-text fw-bold" style="font-size:22px; letter-spacing:1px;">{{ __('Grievance Admin') }}</span>
         </a>
     </div>
 
@@ -69,6 +69,28 @@
                             class="nav-link {{ request()->is('admin/category*') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-tags"></i>
                             <p>{{ __('Categories') }}</p>
+                        </a>
+                    </li>
+                @endcanany
+
+                <!-- Users Link -->
+                @canany(['user.index'])
+                    <li class="nav-item">
+                        <a href="{{ route('user.index') }}"
+                            class="nav-link {{ request()->is('admin/user*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-people"></i>
+                            <p>{{ __('Users') }}</p>
+                        </a>
+                    </li>
+                @endcanany
+
+                <!-- Roles & Permissions Link -->
+                @canany(['role.index'])
+                    <li class="nav-item">
+                        <a href="{{ route('role.index') }}"
+                            class="nav-link {{ request()->is('admin/role*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-shield-lock-fill"></i>
+                            <p>{{ __('Roles & Permissions') }}</p>
                         </a>
                     </li>
                 @endcanany

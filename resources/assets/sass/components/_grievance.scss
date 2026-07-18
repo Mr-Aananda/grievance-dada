@@ -15,7 +15,7 @@
 }
 
 html[data-bs-theme="dark"] .gms-portal-body-bg {
-    background-color: #0f172a !important;
+    background-color: #2B3035 !important;
 }
 
 // ════════════════════════════════════════════════
@@ -82,8 +82,8 @@ html[data-bs-theme="dark"] .gms-scope {
     --gms-danger: #f87171;
     --gms-warning: #fbbf24;
 
-    --gms-bg: #0f172a; // Slate Dark Body bg
-    --gms-card-bg: #1e293b; // Slate Card bg
+    --gms-bg: #2B3035; // Slate Dark Body bg
+    --gms-card-bg: #212529; // Slate Card bg
     --gms-border: #334155; // Slate Border
     --gms-text: #f8fafc;
     --gms-text-muted: #94a3b8;
@@ -131,10 +131,10 @@ html[data-bs-theme="dark"] .gms-scope {
     }
 }
 
-// Card outline colors for different states
-.gms-advisory-card {
-    border-top-color: var(--gms-info) !important;
-}
+// // Card outline colors for different states
+// .gms-advisory-card {
+//     border-top-color: var(--gms-info) !important;
+// }
 
 // ════════════════════════════════════════════════
 // AdminLTE Form Inputs & Selects
@@ -179,19 +179,19 @@ html[data-bs-theme="dark"] .gms-scope {
 // Dark Mode inputs overrides
 html[data-bs-theme="dark"] {
     .form-control, .form-select {
-        background-color: #0f172a !important;
-        border: 1px solid #334155 !important;
-        color: #f8fafc !important;
+        background-color: #212529 !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: #f1f5f9 !important;
 
         &:focus {
             border-color: var(--gms-primary) !important;
             box-shadow: 0 0 0 0.2rem var(--gms-primary-light) !important;
-            background-color: #0f172a !important;
+            background-color: #212529 !important;
         }
 
         option {
-            background-color: #1e293b;
-            color: #f8fafc;
+            background-color: #212529;
+            color: #f1f5f9;
         }
     }
 }
@@ -230,8 +230,8 @@ textarea.form-control {
 // Dark Mode Quill overrides
 html[data-bs-theme="dark"] {
     .ql-toolbar.ql-snow {
-        background: #1e293b !important;
-        border: 1px solid #334155 !important;
+        background: #212529 !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
         border-bottom: none !important;
         
         .ql-stroke { stroke: #94a3b8 !important; }
@@ -240,9 +240,9 @@ html[data-bs-theme="dark"] {
     }
 
     .ql-container.ql-snow {
-        background: #0f172a !important;
-        border: 1px solid #334155 !important;
-        color: #f8fafc !important;
+        background: #212529 !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: #f1f5f9 !important;
         
         .ql-editor.ql-blank::before {
             color: #94a3b8 !important;
@@ -1453,11 +1453,11 @@ html[data-bs-theme="dark"] .gms-mobile-card:hover {
 html[data-bs-theme="dark"] {
     @media (max-width: 991px) {
         .gms-portal-tabs-container {
-            background-color: rgba(30, 41, 59, 0.95) !important;
+            background-color: rgba(33, 37, 41, 0.95) !important;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
         }
         .gms-portal-tabs {
-            background: #0f172a !important;
+            background: #212529 !important;
         }
     }
 }

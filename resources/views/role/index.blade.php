@@ -2,21 +2,21 @@
 
 <x-app-layout>
     <!-- Start header widget -->
-    <div class="widget mb-3 border-top print-none">
-        <div class="widget-body d-flex">
+    <div class="card mb-3">
+        <div class="card-body py-2 d-flex align-items-center">
             <!-- Start menu -->
             @include('role.menu')
             <!-- End menu -->
             
             <!-- Start right buttons -->
             <div class="ms-auto">
-                <button type="button" class="btn icon lg rounded" title="Print" onclick="printable('print-widget')">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Print" onclick="printable('print-widget')">
                     <i class="bi bi-printer"></i>
                 </button>
-                <button type="button" class="btn icon lg rounded" title="Reload" onclick="location.reload()">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Reload" onclick="location.reload()">
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
-                <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
@@ -31,12 +31,12 @@
         <!-- End print header -->
 
         <!-- Start table card -->
-        <div class="widget">
-            <div class="widget-head mb-3">
-                <h5>All Roles</h5>
-                <p><small>Total Result found {{ $roles->total() }} </small></p>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent border-0 d-flex align-items-center py-3">
+                <h5 class="mb-0 fw-bold">All Roles</h5>
+                <span class="badge bg-light text-dark ms-2 fw-semibold">Total: {{ $roles->total() }}</span>
             </div>
-            <div class="widget-body">
+            <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>
@@ -63,14 +63,14 @@
                                     <td class="text-end pe-3 print-none">
                                         @can('role.show')
                                             <a href="{{ route('role.show', $role->id) }}"
-                                               class="btn btn-info sm" title="View Details">
+                                               class="btn btn-sm btn-info text-white" title="View Details">
                                                 <i class="bi bi-eye-fill"></i>
                                             </a>
                                         @endcan
                                         @can('role.edit')
                                             @unless(\Database\Seeders\RoleSeeder::ADMINISTRATOR_RULE_NAME == $role->name)
                                                 <a href="{{ route('role.edit', $role->id) }}"
-                                                   class="btn btn-success sm" title="Edit">
+                                                   class="btn btn-sm btn-success text-white" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                             @endunless
@@ -83,7 +83,7 @@
                                                       onsubmit="return confirm('Are you sure want to delete?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" {{ $role->users_count > 0 ? 'disabled' : '' }} title="Delete" class="btn btn-danger sm">
+                                                    <button type="submit" {{ $role->users_count > 0 ? 'disabled' : '' }} title="Delete" class="btn btn-sm btn-danger text-white">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>

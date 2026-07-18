@@ -2,51 +2,50 @@
 
 <x-app-layout>
     <!-- Start header widget -->
-    <div class="widget mb-3 border-top print-none">
-        <div class="widget-body d-flex">
+    <div class="card mb-3">
+        <div class="card-body py-2 d-flex align-items-center">
             <!-- Start menu -->
             @include('user.menu')
             <!-- End  menu -->
             <!-- Start right button -->
             <div class="ms-auto">
-                <button type="button" class="btn icon lg rounded" title="Search" data-bs-toggle="collapse"
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Search" data-bs-toggle="collapse"
                     data-bs-target="#tableSearch" aria-controls="tableSearch" aria-expanded="false">
-                    <i class="bi bi-search"></i>
+                    <i class="bi bi-search"></i> Filter
                 </button>
-                <button type="button" class="btn icon lg rounded" title="Print" onclick="printable('print-widget')">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Print" onclick="printable('print-widget')">
                     <i class="bi bi-printer"></i>
                 </button>
-
-                <button type="button" class="btn icon lg rounded" title="Reload" onclick="location.reload()">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" title="Reload" onclick="location.reload()">
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
-                <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
             <!-- End right button -->
         </div>
 
-        <!-- Start Search body -->
-        <div class="widget-body collapse {{ request()->search == '1' ? 'show' : '' }}" id="tableSearch">
+        <!-- Start Filter Fill -->
+        <div class="card-footer collapse {{ request()->search == '1' ? 'show' : '' }} bg-light border-0" id="tableSearch">
             <form action="{{ route('user.index') }}">
                 <input hidden name="search" value="1">
-                <div class="row py-3 g-3">
+                <div class="row py-2 g-3">
                     <div class="col-md-3">
-                        <label for="account" class="form-label">User name</label>
-                        <input type="text" class="form-control" value="{{ request()->name }}"
+                        <label for="account" class="form-label small fw-semibold">User name</label>
+                        <input type="text" class="form-control form-control-sm" value="{{ request()->name }}"
                             placeholder="Search users" id="account" list="search-user" name="name">
                     </div>
 
                     <div class="col-md-3">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="text" class="form-control" value="{{ request()->phone }}"
+                        <label for="phone" class="form-label small fw-semibold">Phone</label>
+                        <input type="text" class="form-control form-control-sm" value="{{ request()->phone }}"
                             placeholder="Ex: 01xxx" name="phone" id="phone">
                     </div>
 
                     <div class="col-md-3">
-                        <label for="Status" class="form-label">Status</label>
-                        <select class="form-select" name="status" id="Status">
+                        <label for="Status" class="form-label small fw-semibold">Status</label>
+                        <select class="form-select form-select-sm" name="status" id="Status">
                             <option selected disabled value="">--Choose one--</option>
                             <option value="1" {{ request()->status == '1' ? 'selected' : '' }}>Active User</option>
                             <option value="0" {{ request()->status == '0' ? 'selected' : '' }}>Inactive User</option>
@@ -55,7 +54,7 @@
 
                     <div class="col-md-2">
                         <label class="form-label">&nbsp;</label>
-                        <button class="btn btn-success d-block w-100" type="submit"><i class="bi bi-search"></i>
+                        <button class="btn btn-sm btn-primary d-block w-100" type="submit"><i class="bi bi-search"></i>
                             Search
                         </button>
                     </div>
@@ -71,12 +70,12 @@
         <x-print.header />
         <!-- End print header -->
 
-        <div class="widget">
-            <div class="widget-head mb-3">
-                <h5>All Users</h5>
-                <p><small>Total Result found {{ $users->total() }} </small></p>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent border-0 d-flex align-items-center py-3">
+                <h5 class="mb-0 fw-bold">All Users</h5>
+                <span class="badge bg-light text-dark ms-2 fw-semibold">Total: {{ $users->total() }}</span>
             </div>
-            <div class="widget-body">
+            <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>
@@ -105,13 +104,13 @@
                                     </td>
                                     <td class="text-end pe-3 print-none">
                                         @can('user.show')
-                                            <a href="{{ route('user.show', $user->id) }}" class="btn btn-info sm">
+                                            <a href="{{ route('user.show', $user->id) }}" class="btn btn-sm btn-info text-white">
                                                 <i class="bi bi-eye-fill"></i>
                                             </a>
                                         @endcan
 
                                         @can('user.edit')
-                                            <a href="{{ route('user.edit', $user->id) }}" class="btn btn-success sm">
+                                            <a href="{{ route('user.edit', $user->id) }}" class="btn btn-sm btn-success text-white">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                         @endcan
@@ -126,13 +125,13 @@
                                                     class="d-inline" id="sm-delete-{{ $user->id }}">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-danger sm"
+                                                    <button type="button" class="btn btn-sm btn-danger text-white"
                                                         onclick="if(confirm('Are you sure want to delete?')) { document.getElementById('sm-delete-{{ $user->id }}').submit() } return false">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
                                             @else
-                                                <button class="btn btn-danger sm" disabled>
+                                                <button class="btn btn-sm btn-danger text-white" disabled>
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             @endif

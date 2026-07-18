@@ -1,5 +1,19 @@
 @section('title', __('Process') . ' ' . __('Grievance') . ' #' . $grievance->ticket_number)
 
+@push('style')
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+    <style>
+        .ql-container {
+            font-family: inherit;
+        }
+        .ql-editor {
+            padding: 0;
+            height: auto;
+            min-height: unset;
+        }
+    </style>
+@endpush
+
 <x-app-layout>
     <!-- Start header widget -->
     <div class="card mb-3 shadow-sm">
@@ -8,6 +22,9 @@
                 <i class="bi bi-gear-wide-connected text-primary me-2"></i> {{ __('Process Ticket') }}
             </h5>
             <div class="ms-auto">
+                <a href="{{ route('admin.grievance.edit', $grievance->id) }}" class="btn btn-sm btn-outline-primary me-2" title="{{ __('Edit') }}">
+                    <i class="bi bi-pencil-square"></i> {{ __('Edit Ticket') }}
+                </a>
                 <a href="{{ route('admin.grievance.index') }}" class="btn btn-sm btn-outline-secondary" title="{{ __('Go back') }}">
                     <i class="bi bi-arrow-left"></i> {{ __('Back to List') }}
                 </a>
@@ -51,6 +68,16 @@
                                 <td>{{ $grievance->created_at->format('d M Y, h:i A') }} ({{ $grievance->created_at->diffForHumans() }})</td>
                             </tr>
                             <tr>
+                                <th class="ps-3 text-muted small">{{ __('Submitted By') }}</th>
+                                <td>
+                                    @if($grievance->user)
+                                        <span class="fw-semibold">{{ $grievance->user->name }}</span>
+                                    @else
+                                        <span class="text-muted italic">{{ __('Anonymous') }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
                                 <th class="ps-3 text-muted small">{{ __('Current Status') }}</th>
                                 <td>
                                     <span class="badge bg-{{ $grievance->status_badge }}">
@@ -58,6 +85,22 @@
                                     </span>
                                 </td>
                             </tr>
+                            @if($grievance->statusChangedBy)
+                                <tr>
+                                    <th class="ps-3 text-muted small">{{ __('Status Changed By') }}</th>
+                                    <td>
+                                        <span class="fw-semibold text-dark">{{ $grievance->statusChangedBy->name }}</span>
+                                    </td>
+                                </tr>
+                            @endif
+                            @if($grievance->updatedBy)
+                                <tr>
+                                    <th class="ps-3 text-muted small">{{ __('Last Updated By') }}</th>
+                                    <td>
+                                        <span class="fw-semibold text-dark">{{ $grievance->updatedBy->name }}</span>
+                                    </td>
+                                </tr>
+                            @endif
                             @if($grievance->resolved_at)
                                 <tr>
                                     <th class="ps-3 text-muted small">{{ __('Resolved At') }}</th>
@@ -79,7 +122,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <div class="p-3 bg-body-secondary rounded fs-6" style="white-space: pre-wrap; line-height: 1.6;">{{ $grievance->description }}</div>
+                    <div class="p-3 bg-body-secondary rounded fs-6 ql-editor" style="line-height: 1.6;">{!! $grievance->description !!}</div>
                 </div>
             </div>
 

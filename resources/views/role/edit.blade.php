@@ -2,14 +2,14 @@
 
 <x-app-layout>
     <!-- Start header widget -->
-    <div class="widget mb-3">
-        <div class="widget-body d-flex">
+    <div class="card mb-3">
+        <div class="card-body py-2 d-flex align-items-center">
             <!-- Start left menu -->
             @include('role.menu')
             <!-- End left menu -->
             <!-- Start right buttons -->
             <div class="ms-auto">
-                <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
@@ -19,11 +19,11 @@
     <!-- End header widget -->
 
     <!-- Start body card -->
-    <div class="widget">
-        <div class="widget-head mb-3">
-            <h5>Update Role</h5>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-transparent border-0 py-3">
+            <h5 class="mb-0 fw-bold">Update Role</h5>
         </div>
-        <div class="widget-body">
+        <div class="card-body">
             <form action="{{ route('role.update', $role->id) }}" method="POST">
                 @csrf
                 @method('PUT')

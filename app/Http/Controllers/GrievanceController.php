@@ -288,6 +288,51 @@ class GrievanceController extends Controller
     }
 
     /**
+     * Admin edit form.
+     */
+    public function adminEdit($id): View
+    {
+        $grievance = Grievance::findOrFail($id);
+        $categories = Category::where('status', true)->orderBy('name')->get();
+        $departments = Department::where('status', true)->orderBy('name')->get();
+
+        return view('pages.grievance.edit', compact('grievance', 'categories', 'departments'));
+    }
+
+    /**
+     * Admin update grievance.
+     */
+    public function adminUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'employee_id' => 'nullable|string|max:255',
+            'description' => 'required|string',
+            'status' => 'required|in:submitted,under_review,in_resolution,resolved',
+            'admin_remarks' => 'nullable|string|max:5000',
+        ]);
+
+        $grievance = Grievance::findOrFail($id);
+        $grievance->category_id = $request->category_id;
+        $grievance->department_id = $request->department_id;
+        $grievance->employee_id = $request->employee_id;
+        $grievance->description = $request->description;
+        $grievance->status = $request->status;
+        $grievance->admin_remarks = $request->admin_remarks;
+
+        if ($request->status === 'resolved') {
+            $grievance->resolved_at = now();
+        } else {
+            $grievance->resolved_at = null;
+        }
+
+        $grievance->save();
+
+        return redirect()->route('admin.grievance.show', $id)->with('success', 'Grievance updated successfully.');
+    }
+
+    /**
      * Admin status update.
      */
     public function adminUpdateStatus(Request $request, $id)
@@ -321,5 +366,122 @@ class GrievanceController extends Controller
         $grievance->delete();
 
         return redirect()->route('admin.grievance.index')->with('success', 'Grievance deleted successfully.');
+    }
+
+    /**
+     * Admin trash view.
+     */
+    public function adminTrash(Request $request): View
+    {
+        $query = Grievance::onlyTrashed()->with(['category', 'department']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('employee_id', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        $grievances = $query->latest()->paginate(30)->withQueryString();
+        $categories = Category::where('status', true)->orderBy('name')->get();
+        $departments = Department::where('status', true)->orderBy('name')->get();
+
+        return view('pages.grievance.trash', compact('grievances', 'categories', 'departments'));
+    }
+
+    /**
+     * Admin restore.
+     */
+    public function adminRestore($id)
+    {
+        $grievance = Grievance::onlyTrashed()->findOrFail($id);
+        $grievance->restore();
+
+        return redirect()->route('admin.grievance.trash')->with('success', 'Grievance restored successfully.');
+    }
+
+    /**
+     * Admin permanent delete.
+     */
+    public function adminPermanentDelete($id)
+    {
+        $grievance = Grievance::onlyTrashed()->findOrFail($id);
+        
+        // Delete associated media files
+        $grievance->clearMediaCollection('grievance_images');
+        $grievance->clearMediaCollection('grievance_documents');
+        $grievance->clearMediaCollection('grievance_videos');
+        
+        $grievance->forceDelete();
+
+        return redirect()->route('admin.grievance.trash')->with('success', 'Grievance permanently deleted.');
+    }
+
+    /**
+     * Admin bulk delete.
+     */
+    public function adminBulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (empty($ids)) {
+            return redirect()->back()->with('error', 'No tickets selected.');
+        }
+
+        Grievance::whereIn('id', $ids)->get()->each(function ($grievance) {
+            $grievance->delete();
+        });
+
+        return redirect()->route('admin.grievance.index')->with('success', 'Selected grievances deleted successfully.');
+    }
+
+    /**
+     * Admin bulk restore.
+     */
+    public function adminBulkRestore(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (empty($ids)) {
+            return redirect()->back()->with('error', 'No tickets selected.');
+        }
+
+        Grievance::onlyTrashed()->whereIn('id', $ids)->get()->each(function ($grievance) {
+            $grievance->restore();
+        });
+
+        return redirect()->route('admin.grievance.trash')->with('success', 'Selected grievances restored successfully.');
+    }
+
+    /**
+     * Admin bulk permanent delete.
+     */
+    public function adminBulkPermanentDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (empty($ids)) {
+            return redirect()->back()->with('error', 'No tickets selected.');
+        }
+
+        Grievance::onlyTrashed()->whereIn('id', $ids)->get()->each(function ($grievance) {
+            $grievance->clearMediaCollection('grievance_images');
+            $grievance->clearMediaCollection('grievance_documents');
+            $grievance->clearMediaCollection('grievance_videos');
+            $grievance->forceDelete();
+        });
+
+        return redirect()->route('admin.grievance.trash')->with('success', 'Selected grievances permanently deleted.');
     }
 }

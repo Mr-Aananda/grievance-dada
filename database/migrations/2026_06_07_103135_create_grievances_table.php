@@ -24,6 +24,8 @@ return new class extends Migration
             $table->timestamp('resolved_at')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('status_changed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

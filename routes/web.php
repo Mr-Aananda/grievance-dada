@@ -104,7 +104,16 @@ Route::prefix('admin')
         */
         Route::prefix('grievances')->name('admin.grievance.')->group(function () {
             Route::get('/', [GrievanceController::class, 'adminIndex'])->name('index');
+            Route::get('/trash', [GrievanceController::class, 'adminTrash'])->name('trash');
+            Route::get('/restore/{id}', [GrievanceController::class, 'adminRestore'])->name('restore');
+            Route::delete('/permanent-delete/{id}', [GrievanceController::class, 'adminPermanentDelete'])->name('permanentDelete');
+            Route::post('/bulk-delete', [GrievanceController::class, 'adminBulkDelete'])->name('bulk-delete');
+            Route::post('/bulk-restore', [GrievanceController::class, 'adminBulkRestore'])->name('bulk-restore');
+            Route::post('/bulk-permanent-delete', [GrievanceController::class, 'adminBulkPermanentDelete'])->name('bulk-permanent-delete');
+
             Route::get('/{id}', [GrievanceController::class, 'adminShow'])->name('show');
+            Route::get('/{id}/edit', [GrievanceController::class, 'adminEdit'])->name('edit');
+            Route::put('/{id}', [GrievanceController::class, 'adminUpdate'])->name('update');
             Route::post('/{id}/update-status', [GrievanceController::class, 'adminUpdateStatus'])->name('update-status');
             Route::delete('/{id}', [GrievanceController::class, 'adminDestroy'])->name('destroy');
         });

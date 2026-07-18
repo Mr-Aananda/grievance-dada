@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Global Theme Styling (Light / Dark) Overrides
+   ========================================================================== */
+
+/* Body & Layout Backgrounds */
+[data-bs-theme="light"] {
+    body, .app-main {
+        background-color: #f4f6f9 !important;
+    }
+}
+
+[data-bs-theme="dark"] {
+    body, .app-main {
+        background-color: #2B3035 !important; /* Base darker background */
+    }
+}
+
+/* Header widget cards (Submenu Navbars & Process headers) & Widgets (User/Role headers) */
+.card.mb-3:has(nav.navbar),
+.card.mb-3:has(h5.mb-0),
+.card.mb-3:has(.navbar-nav),
+.widget.mb-3:has(nav.navbar),
+.widget.mb-3:has(h5.mb-0),
+.widget.mb-3:has(.navbar-nav) {
+    border-radius: 8px !important;
+    margin-bottom: 1.5rem !important;
+    
+    .card-body, .widget-body {
+        padding: 0.5rem 1rem !important;
+    }
+    
+    /* Light mode */
+    [data-bs-theme="light"] & {
+        background-color: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+    }
+    
+    /* Dark mode */
+    [data-bs-theme="dark"] & {
+        background-color: #212529 !important; /* Elevated card background */
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Hide duplicate styling on internal navbars when inside header cards */
+.card:has(nav.navbar) nav.navbar,
+.widget:has(nav.navbar) nav.navbar {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Submenu Navbar Link Items */
+nav.navbar .navbar-nav {
+    flex-direction: row;
+    gap: 0.5rem;
+    
+    .nav-item {
+        .nav-link {
+            padding: 0.4rem 1.2rem !important;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: inherit;
+            
+            &.active {
+                color: #fff !important;
+                background-color: #3b82f6 !important; /* Fallback primary */
+                background-color: var(--theme-color) !important; /* Theme primary */
+                font-weight: 600;
+            }
+            
+            /* Active trash tab specific styling */
+            &.active[href*="trash"] {
+                background-color: #ef4444 !important;
+            }
+        }
+    }
+}
+
+/* All Body Cards (Tables, Forms, Details, etc.) & Widgets (User/Role list/form cards) */
+.card:not(:has(nav.navbar)):not(:has(h5.mb-0)):not(:has(.navbar-nav)),
+.widget:not(:has(nav.navbar)):not(:has(h5.mb-0)):not(:has(.navbar-nav)) {
+    transition: all 0.25s ease;
+    border-radius: 12px !important;
+    
+    [data-bs-theme="light"] & {
+        background-color: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.07) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04) !important;
+    }
+    
+    [data-bs-theme="dark"] & {
+        background-color: #212529 !important; /* Elevated card background */
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+}
+
+/* Inputs & Form Controls Styling for Theme Consistency */
+[data-bs-theme="dark"] {
+    /* Form control backgrounds in dark mode - using base background #212529 */
+    .form-control,
+    .form-select,
+    .input-group-text,
+    input[type="search"],
+    .select2-container .select2-selection,
+    .select2-dropdown {
+        background-color: #212529 !important;
+        color: #f1f5f9 !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    
+    .form-control::placeholder,
+    input::placeholder,
+    input[type="search"]::placeholder {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+    
+    /* Focused inputs */
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #212529 !important;
+        border-color: var(--theme-color) !important;
+        box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25) !important;
+    }
+
+    /* Table styling for dark theme coherence */
+    .table {
+        --bs-table-bg: transparent;
+        --bs-table-border-color: rgba(255, 255, 255, 0.08);
+        --bs-table-color: #e2e8f0;
+    }
+    
+    .table-light {
+        --bs-table-bg: rgba(255, 255, 255, 0.03) !important;
+        --bs-table-color: #ffffff !important;
+    }
+}
+
+[data-bs-theme="light"] {
+    .form-control,
+    .form-select,
+    .input-group-text,
+    input[type="search"],
+    .select2-container .select2-selection,
+    .select2-dropdown {
+        background-color: #ffffff !important;
+        color: #212529 !important;
+        border-color: #dee2e6 !important;
+    }
+    
+    .form-control::placeholder,
+    input::placeholder,
+    input[type="search"]::placeholder {
+        color: #6c757d !important;
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #ffffff !important;
+        border-color: var(--theme-color) !important;
+    }
+}
+
+/* Reduce top bar navbar icons spacing */
+.app-header.navbar {
+    .navbar-nav {
+        gap: 0.25rem !important;
+        
+        .nav-item {
+            .nav-link {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+        }
+    }
+}

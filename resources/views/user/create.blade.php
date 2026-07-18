@@ -1,14 +1,14 @@
 @section('title', 'Create user')
 <x-app-layout>
     <!-- Start header widget -->
-    <div class="widget mb-3">
-        <div class="widget-body d-flex">
+    <div class="card mb-3">
+        <div class="card-body py-2 d-flex align-items-center">
             <!-- Start left menu -->
             @include('user.menu')
             <!-- End left menu -->
             <!-- Start right buttons -->
             <div class="ms-auto">
-                <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
@@ -20,12 +20,12 @@
     <!-- Start body widget -->
     <div class="row">
         <div class="col-md-12">
-            <div class="widget">
-                <div class="widget-head mb-3">
-                    <h5>Create New User</h5>
-                    <p><small>Must fill star (<span class="text-danger fw-bold">*</span>) pointed boxes</small></p>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="mb-0 fw-bold">Create New User</h5>
+                    <p class="mb-0 text-muted small">Must fill star (<span class="text-danger fw-bold">*</span>) pointed boxes</p>
                 </div>
-                <div class="widget-body">
+                <div class="card-body">
                     <form action="{{ route('user.store') }}" method="POST">
                         @csrf
                         <div class="row g-3 mb-2">

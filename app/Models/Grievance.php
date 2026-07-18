@@ -24,6 +24,8 @@ class Grievance extends Model implements HasMedia
         'resolved_at',
         'user_id',
         'updated_id',
+        'deleted_by',
+        'status_changed_by',
     ];
 
     protected $casts = [
@@ -49,6 +51,16 @@ class Grievance extends Model implements HasMedia
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_id');
+    }
+
+    public function deletedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    public function statusChangedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'status_changed_by');
     }
 
     // ── Media Collections (D Drive via grievance_media disk) ───
@@ -188,7 +200,21 @@ class Grievance extends Model implements HasMedia
         static::updating(function ($grievance) {
             if (auth()->check()) {
                 $grievance->updated_id = auth()->id();
+                if ($grievance->isDirty('status')) {
+                    $grievance->status_changed_by = auth()->id();
+                }
             }
+        });
+
+        static::deleting(function ($grievance) {
+            if (auth()->check() && !$grievance->isForceDeleting()) {
+                $grievance->deleted_by = auth()->id();
+                $grievance->saveQuietly();
+            }
+        });
+
+        static::restoring(function ($grievance) {
+            $grievance->deleted_by = null;
         });
     }
 

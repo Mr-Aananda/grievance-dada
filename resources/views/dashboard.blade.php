@@ -1,5 +1,6 @@
 @section('title', __('Dashboard'))
 
+
 <x-app-layout>
 
 {{-- ═══ STAT CARDS ═══ --}}
@@ -67,89 +68,12 @@
 
 </div>
 
-{{-- ═══ CHARTS + TABLE ROW ═══ --}}
+{{-- ═══ RECENT GRIEVANCES & SUMMARY ROW ═══ --}}
 <div class="row g-3 mb-4">
 
-    {{-- Category Doughnut Chart --}}
-    <div class="col-lg-4">
+    {{-- Recent Grievances --}}
+    <div class="col-lg-8">
         <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
-            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
-                <i class="bi bi-tags-fill text-primary me-2"></i>
-                <h6 class="mb-0 fw-bold">{{ __('Category Distribution') }}</h6>
-            </div>
-            <div class="card-body d-flex align-items-center justify-content-center" style="min-height:270px;">
-                @if(count($categoryStats) > 0 && $stats['total'] > 0)
-                    <canvas id="categoryChart" style="max-height:240px;"></canvas>
-                @else
-                    <div class="text-center text-muted py-4">
-                        <i class="bi bi-pie-chart" style="font-size:2rem; opacity:.3;"></i>
-                        <p class="mt-2 small">{{ __('No data yet') }}</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    {{-- Department Horizontal Bar Chart --}}
-    <div class="col-lg-5">
-        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
-            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
-                <i class="bi bi-building-fill text-success me-2"></i>
-                <h6 class="mb-0 fw-bold">{{ __('Department Distribution') }}</h6>
-            </div>
-            <div class="card-body" style="min-height:270px;">
-                @if(count($departmentStats) > 0 && $stats['total'] > 0)
-                    <canvas id="departmentChart"></canvas>
-                @else
-                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                        <div class="text-center">
-                            <i class="bi bi-bar-chart" style="font-size:2rem; opacity:.3;"></i>
-                            <p class="mt-2 small">{{ __('No data yet') }}</p>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    {{-- Summary Totals --}}
-    <div class="col-lg-3">
-        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
-            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
-                <i class="bi bi-bar-chart-line-fill text-warning me-2"></i>
-                <h6 class="mb-0 fw-bold">{{ __('Summary') }}</h6>
-            </div>
-            <div class="card-body">
-                <ul class="list-unstyled mb-0">
-                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                        <span class="small fw-semibold text-muted">{{ __('Total Grievances') }}</span>
-                        <span class="badge rounded-pill" style="background:#4361ee; color:#fff; font-size:.85rem; padding:5px 12px;">{{ $stats['total'] }}</span>
-                    </li>
-                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                        <span class="small fw-semibold text-muted">{{ __("Today's") }}</span>
-                        <span class="badge rounded-pill bg-secondary" style="font-size:.85rem; padding:5px 12px;">{{ $stats['today_total'] }}</span>
-                    </li>
-                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                        <span class="small fw-semibold text-muted">{{ __('Today Resolved') }}</span>
-                        <span class="badge rounded-pill" style="background:#06d6a0; color:#fff; font-size:.85rem; padding:5px 12px;">{{ $todayResolved }}</span>
-                    </li>
-                    <li class="d-flex justify-content-between align-items-center py-2">
-                        <span class="small fw-semibold text-muted">{{ __("Today's Growth") }}</span>
-                        <span class="badge rounded-pill {{ $todayGrowth >= 0 ? 'bg-success' : 'bg-danger' }}" style="font-size:.85rem; padding:5px 12px;">
-                            {{ $todayGrowth >= 0 ? '+' : '' }}{{ $todayGrowth }}%
-                        </span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-{{-- ═══ RECENT GRIEVANCES TABLE ═══ --}}
-<div class="row">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm" style="border-radius:14px;">
             <div class="card-header bg-transparent border-bottom d-flex align-items-center justify-content-between py-3">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-clock-history text-primary me-2"></i>
@@ -195,12 +119,155 @@
             </div>
         </div>
     </div>
+
+    {{-- Summary --}}
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
+                <i class="bi bi-bar-chart-line-fill text-warning me-2"></i>
+                <h6 class="mb-0 fw-bold">{{ __('Summary') }}</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small fw-semibold text-muted">{{ __('Total Grievances') }}</span>
+                        <span class="badge rounded-pill" style="background:#4361ee; color:#fff; font-size:.85rem; padding:5px 12px;">{{ $stats['total'] }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small fw-semibold text-muted">{{ __("Today's") }}</span>
+                        <span class="badge rounded-pill bg-secondary" style="font-size:.85rem; padding:5px 12px;">{{ $stats['today_total'] }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small fw-semibold text-muted">{{ __('Today Resolved') }}</span>
+                        <span class="badge rounded-pill" style="background:#06d6a0; color:#fff; font-size:.85rem; padding:5px 12px;">{{ $todayResolved }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center py-2">
+                        <span class="small fw-semibold text-muted">{{ __("Today's Growth") }}</span>
+                        <span class="badge rounded-pill {{ $todayGrowth >= 0 ? 'bg-success' : 'bg-danger' }}" style="font-size:.85rem; padding:5px 12px;">
+                            {{ $todayGrowth >= 0 ? '+' : '' }}{{ $todayGrowth }}%
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{{-- ═══ CHARTS ROW ═══ --}}
+<div class="row g-3 mb-4">
+
+    {{-- Line Chart: Grievance Trend --}}
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
+                <i class="bi bi-graph-up text-primary me-2"></i>
+                <h6 class="mb-0 fw-bold">{{ __('Grievance Submission & Resolution Trend') }}</h6>
+            </div>
+            <div class="card-body" style="min-height:300px;">
+                <canvas id="trendChart" style="max-height: 280px; width: 100%;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {{-- Category Doughnut Chart --}}
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+            <div class="card-header bg-transparent border-bottom d-flex align-items-center py-3">
+                <i class="bi bi-tags-fill text-info me-2"></i>
+                <h6 class="mb-0 fw-bold">{{ __('Category Distribution') }}</h6>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center" style="min-height:300px;">
+                @if(count($categoryStats) > 0 && $stats['total'] > 0)
+                    <canvas id="categoryChart" style="max-height: 260px; width: 100%;"></canvas>
+                @else
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-pie-chart" style="font-size:2rem; opacity:.3;"></i>
+                        <p class="mt-2 small">{{ __('No data yet') }}</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @push('script')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
+    // Theme adaptive color resolution
+    const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    const textColor = isDark ? '#a1a5b7' : '#5e6278';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
+    // ─── Trend Line Chart ───
+    const trendLabels = @json($trendLabels);
+    const trendCreated = @json($trendCreated);
+    const trendResolved = @json($trendResolved);
+    
+    new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: trendLabels,
+            datasets: [
+                {
+                    label: "{{ __('Created') }}",
+                    data: trendCreated,
+                    borderColor: '#4361ee',
+                    backgroundColor: 'rgba(67, 97, 238, 0.08)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#4361ee'
+                },
+                {
+                    label: "{{ __('Resolved') }}",
+                    data: trendResolved,
+                    borderColor: '#06d6a0',
+                    backgroundColor: 'rgba(6, 214, 160, 0.08)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#06d6a0'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: textColor,
+                        font: { size: 11, weight: '600' },
+                        boxWidth: 15,
+                        padding: 10
+                    }
+                },
+                tooltip: {
+                    padding: 10,
+                    cornerRadius: 8,
+                    intersect: false
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: textColor, font: { size: 10 } }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: textColor, precision: 0, font: { size: 10 } },
+                    grid: { color: gridColor }
+                }
+            }
+        }
+    });
 
     // ─── Category Doughnut ───
     @if(count($categoryStats) > 0 && $stats['total'] > 0)
@@ -228,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 legend: {
                     position: 'bottom',
                     labels: {
+                        color: textColor,
                         font: { size: 11 },
                         boxWidth: 12,
                         padding: 12,
@@ -241,55 +309,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             return ` ${ctx.label}: ${ctx.raw} (${pct}%)`;
                         }
                     }
-                }
-            }
-        }
-    });
-    @endif
-
-    // ─── Department Horizontal Bar ───
-    @if(count($departmentStats) > 0 && $stats['total'] > 0)
-    const deptLabels = @json(array_column($departmentStats, 'name'));
-    const deptData   = @json(array_column($departmentStats, 'count'));
-    const barColors  = [
-        'rgba(6,214,160,.8)','rgba(17,138,178,.8)','rgba(67,97,238,.8)',
-        'rgba(247,127,0,.8)','rgba(114,9,183,.8)','rgba(214,40,40,.8)',
-        'rgba(42,157,143,.8)','rgba(233,196,106,.8)','rgba(231,111,81,.8)',
-    ];
-    new Chart(document.getElementById('departmentChart'), {
-        type: 'bar',
-        data: {
-            labels: deptLabels,
-            datasets: [{
-                label: 'Grievances',
-                data: deptData,
-                backgroundColor: barColors,
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) {
-                            return ` ${ctx.raw} ticket${ctx.raw !== 1 ? 's' : ''}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: { precision: 0, font: { size: 11 } },
-                    grid: { color: 'rgba(0,0,0,.06)' }
-                },
-                y: {
-                    ticks: { font: { size: 11 } },
-                    grid: { display: false }
                 }
             }
         }

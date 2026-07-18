@@ -2,21 +2,21 @@
 
 <x-app-layout>
     <!-- Start header widget -->
-    <div class="widget mb-3">
-        <div class="widget-body d-flex">
+    <div class="card mb-3">
+        <div class="card-body py-2 d-flex align-items-center">
             <!-- Start left menu -->
             @include('role.menu')
             <!-- End left menu -->
             
             <!-- Start right buttons -->
             <div class="ms-auto d-flex gap-1">
-                <button type="button" class="btn icon lg rounded" title="Print Details"
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="Print Details"
                     onclick="printable('print-widget')">
                     <i class="bi bi-printer"></i>
                 </button>
                 @unless(\Database\Seeders\RoleSeeder::ADMINISTRATOR_RULE_NAME == $role->name)
                     @can('role.edit')
-                        <a href="{{ route('role.edit', $role->id) }}" class="btn icon lg rounded" title="Edit">
+                        <a href="{{ route('role.edit', $role->id) }}" class="btn btn-sm btn-outline-success" title="Edit">
                             <i class="bi bi-pencil-square"></i>
                         </a>
                     @endcan
@@ -26,14 +26,14 @@
                                 onsubmit="return confirm('Are you sure want to delete?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn icon lg rounded" title="Delete">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
                         @endunless
                     @endcan
                 @endunless
-                <button type="button" class="btn icon lg rounded" title="Go back" onclick="history.back()">
+                <button type="button" class="btn btn-sm btn-outline-secondary" title="Go back" onclick="history.back()">
                     <i class="bi bi-arrow-left"></i>
                 </button>
             </div>
@@ -50,11 +50,11 @@
         <div class="row g-3">
             <div class="col-12">
                 <!-- Start details card -->
-                <div class="widget mb-3">
-                    <div class="widget-head mb-3">
-                        <h5>Role Details</h5>
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-header bg-transparent border-0 py-3">
+                        <h5 class="mb-0 fw-bold">Role Details</h5>
                     </div>
-                    <div class="widget-body">
+                    <div class="card-body">
                         <table class="table table-hover align-middle">
                             <tbody>
                                 <tr>
